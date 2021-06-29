@@ -95,4 +95,6 @@ public abstract class PhysicsObject {
 		return PhysicsObject.GRAVITATIONAL_CONSTANT*this.mass*o.getMass()/distanceSquared;
 	}
 	
+	public abstract void physicsTick(long timePassedMillis);
+	
 }

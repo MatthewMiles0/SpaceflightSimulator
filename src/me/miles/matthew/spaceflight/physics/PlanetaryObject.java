@@ -29,4 +29,9 @@ public class PlanetaryObject extends PhysicsObject {
 				(int) Math.round(2*radius*zoom));
 		
 	}
+
+	@Override
+	public void physicsTick(long timePassedMillis) {
+		
+	}
 }

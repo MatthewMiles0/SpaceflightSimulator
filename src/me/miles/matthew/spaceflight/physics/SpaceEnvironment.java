@@ -43,4 +43,10 @@ public class SpaceEnvironment {
 	public void removeBody(int pos) {
 		bodies.remove(pos);
 	}
+	
+	public void physicsTick(long millisPassed) {
+		for (int i = 0; i < getBodyCount(); i++) {
+			bodies.get(i).physicsTick(millisPassed);
+		}
+	}
 }

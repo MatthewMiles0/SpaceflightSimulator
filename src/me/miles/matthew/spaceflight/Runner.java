@@ -16,7 +16,9 @@ public class Runner implements ActionListener {
 	SpaceView view;
 	SpaceEnvironment env;
 	Timer physicsUpdate;
-	long last, now;
+	Timer frameUpdate;
+	long last = 0;
+	long now = 0;
 	
 	public static void main(String[] args) {
 		new Runner();
@@ -37,6 +39,9 @@ public class Runner implements ActionListener {
 		
 		physicsUpdate = new Timer(14, this);
 		physicsUpdate.start();
+		
+		frameUpdate = new Timer(14, this);
+		frameUpdate.start();
 	}
 
 	@Override
@@ -44,7 +49,12 @@ public class Runner implements ActionListener {
 		if (ae.getSource() == physicsUpdate) {
 			last = now;
 			now = Instant.now().toEpochMilli();
-			//env.physicsTick(timePassedSeconds);
+			long timePassedSeconds = last-now;
+			env.physicsTick(timePassedSeconds);
+		}
+		
+		if (ae.getSource() == frameUpdate) {
+			view.refresh();
 		}
 	}
 }
