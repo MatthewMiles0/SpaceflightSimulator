@@ -20,12 +20,15 @@ import me.miles.matthew.spaceflight.physics.SpaceEnvironment;
 public class SpaceView extends JPanel implements MouseListener, MouseWheelListener, ActionListener {
 	private SpaceEnvironment mySpace;
 	private double zoom = 1d;
+	private int cX = this.getWidth()/2;
+	private int cY = this.getWidth()/2;
 	
 	public SpaceView(SpaceEnvironment space) {
 		this.mySpace = space;
 		
 		// TEST
 		mySpace.addBody((PhysicsObject) new PlanetaryObject(1000000d, 0, 0, true, 0xAF2109, 100));
+		mySpace.addBody((PhysicsObject) new PlanetaryObject(1000000d, 150, 200, true, 0x1123AB, 50));
 	
 		// Listeners
 		this.setFocusable(true);
@@ -45,7 +48,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		for (int i = 0; i < mySpace.getBodyCount(); i++) {
-			mySpace.getBodyAt(i).draw(g2, this.getWidth()/2, this.getHeight()/2, zoom);
+			mySpace.getBodyAt(i).draw(g2, cX, cY, zoom);
 		}
 	}
 
@@ -55,6 +58,13 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int dir = e.getWheelRotation();
+		int mouseX = e.getX();
+		int mouseY = e.getY();
+		
+		cX -= mouseX + this.getWidth()/2;
+		cY -= mouseX + this.getWidth()/2;
+		
+		// https://stackoverflow.com/a/3151987/5627381
 		zoom *= 1.0d-0.1d*dir;
 		//zoom -= 0.1d * dir;
 	}
