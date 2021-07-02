@@ -83,7 +83,22 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 		double zoom = 1.0d-(0.1d*dir);
 		
+		// translate mouse pos to centre
 		
+		cX -= (mouseX - this.getWidth()/2) * scale;
+		cY -= (mouseY - this.getHeight()/2) * scale;
+		
+		// alter scale
+		
+		scale *= zoom;
+		
+		// translate back
+		
+		cX += (mouseX - this.getWidth()/2) * scale;
+		cY += (mouseY - this.getHeight()/2) * scale;
+		
+		
+		cX *= a;
 		
 		cX -= mouseX / (scale * zoom) - mouseX/scale;
 		cY -= mouseY / (scale * zoom) - mouseY/scale;
