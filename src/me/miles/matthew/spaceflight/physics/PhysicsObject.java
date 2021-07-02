@@ -8,8 +8,8 @@ public abstract class PhysicsObject {
 	
 	protected double mass; // kg
 	
-	protected int xPos;
-	protected int yPos;
+	protected double xPos;
+	protected double yPos;
 
 	protected double xVel; // m/s
 	protected double yVel; // m/s
@@ -46,7 +46,7 @@ public abstract class PhysicsObject {
 		this.yVel = yVel;
 	}
 	
-	public int getXPos() {
+	public double getXPos() {
 		return xPos;
 	}
 
@@ -54,7 +54,7 @@ public abstract class PhysicsObject {
 		this.xPos = xPos;
 	}
 
-	public int getYPos() {
+	public double getYPos() {
 		return yPos;
 	}
 
@@ -62,8 +62,8 @@ public abstract class PhysicsObject {
 		this.yPos = yPos;
 	}
 	
-	public Dimension getPos() {
-		return new Dimension(xPos, yPos);
+	public double[] getPos() {
+		return new double[] {xPos, yPos};
 	}
 	
 	public void setPos(int xPos, int yPos) {
@@ -95,6 +95,40 @@ public abstract class PhysicsObject {
 		return PhysicsObject.GRAVITATIONAL_CONSTANT*this.mass*o.getMass()/distanceSquared;
 	}
 	
-	public abstract void physicsTick(long timePassedMillis);
+	public void doGAcceleration(PhysicsObject o, long timePassedMillis) {
+		double massProd = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass();
+		
+		double xAcc = massProd / Math.pow(this.xPos-o.getXPos(), 2);
+		double yAcc = massProd / Math.pow(this.yPos-o.getYPos(), 2);
+		
+		xVel += xAcc*timePassedMillis/1000d;
+		yVel += yAcc*timePassedMillis/1000d;
+	}
+	
+	/*
+	/**
+	 * Gets the angle to another object in radians from π to -π,
+	 * @param o
+	 * @return angle in radians -π < θ < π
+	 * /
+	public double getAngleTo(PhysicsObject o) {
+		double angle = Math.toDegrees(Math.atan2(o.getYPos() - yPos, o.getXPos() - xPos));
+		
+		return angle;
+	}
+	
+	public void applyForceVector(double magnitude, double angle) {
+		
+	}
+	
+	public void applyFoceComponents(double x, double y) {
+		
+	}*/
+	
+	public void physicsTick(long timePassedMillis) {
+		xPos += xVel*timePassedMillis/1000d;
+		//System.out.println(xPos);
+		yPos += yVel*timePassedMillis/1000d;
+	};
 	
 }

@@ -46,7 +46,14 @@ public class SpaceEnvironment {
 	
 	public void physicsTick(long millisPassed) {
 		for (int i = 0; i < getBodyCount(); i++) {
-			bodies.get(i).physicsTick(millisPassed);
+			PhysicsObject body = bodies.get(i);
+			//body.setXVel(5);
+			for (int n = 0; n < bodies.size(); n++) {
+				if (i == n) continue;
+				//body.doGAcceleration(bodies.get(n), millisPassed);
+			}
+			
+			body.physicsTick(millisPassed);
 		}
 	}
 }

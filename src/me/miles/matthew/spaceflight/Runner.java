@@ -17,7 +17,7 @@ public class Runner implements ActionListener {
 	SpaceEnvironment env;
 	Timer physicsUpdate;
 	Timer frameUpdate;
-	long last = 0;
+	long last = Instant.now().toEpochMilli();
 	long now = 0;
 	
 	public static void main(String[] args) {
@@ -27,7 +27,7 @@ public class Runner implements ActionListener {
 	public Runner() {
 		window = new JFrame();
 		window.setSize(1000, 1000);
-		window.setTitle("SPACE");
+		window.setTitle("Spaceflight Simulator");
 		
 		env = new SpaceEnvironment();
 		view = new SpaceView(env);
@@ -49,11 +49,10 @@ public class Runner implements ActionListener {
 		if (ae.getSource() == physicsUpdate) {
 			last = now;
 			now = Instant.now().toEpochMilli();
-			long timePassedSeconds = last-now;
-			env.physicsTick(timePassedSeconds);
-		}
-		
-		if (ae.getSource() == frameUpdate) {
+			long timePassedMillis = now-last;
+			//S/ystem.out.println(timePassedMillis/1000d);
+			env.physicsTick(timePassedMillis);
+		} else if (ae.getSource() == frameUpdate) {
 			view.refresh();
 		}
 	}
