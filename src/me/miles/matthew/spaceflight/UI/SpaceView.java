@@ -40,7 +40,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		mySpace.addBody((PhysicsObject) new PlanetaryObject(11090000000000000000000d, 20000000, 20000000, true, 0x34ace3, 9883000, "Bluto"));
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, 150, 200, true, 0x33FF33, 50));
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, -150, 150, true, 0x3333FF, 75));
-	
+		
 		// Listeners
 		this.setFocusable(true);
 		this.addMouseListener(this);
@@ -83,6 +83,17 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 		double zoom = 1.0d-(0.1d*dir);
 		
+		// mouse pos in space coords:
+		int msx = (int) (mouseX / scale - cX);
+		int msy = (int) (mouseY / scale - cX);
+		
+		cX -= msx;
+		cY -= msy;
+		
+		System.out.println(cX+" : "+cY);
+		
+		
+		/*
 		// translate mouse pos to centre
 		
 		cX -= (mouseX - this.getWidth()/2) * scale;
@@ -92,26 +103,30 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 		scale *= zoom;
 		
-		// translate back
+		// translate back with new zoom
 		
 		cX += (mouseX - this.getWidth()/2) * scale;
 		cY += (mouseY - this.getHeight()/2) * scale;
 		
 		
-		cX *= a;
+		//cX *= a;
 		
-		cX -= mouseX / (scale * zoom) - mouseX/scale;
-		cY -= mouseY / (scale * zoom) - mouseY/scale;
+		//cX -= mouseX / (scale * zoom) - mouseX/scale;
+		//cY -= mouseY / (scale * zoom) - mouseY/scale;
 		
 		// (cX, cY) is now the top left corner of the screen in space coordinates
 		
 		//cX -= (mouseX - this.getWidth()/2d) * scale;
 		//cY -= (mouseY - this.getHeight()/2d) * scale;
 		
-		scale *= zoom;
+		//scale *= zoom;
 		
 		// https://stackoverflow.com/a/3151987/5627381
 		//zoom -= 0.1d * dir;
+		
+		
+		*/
+		
 	}
 
 	@Override

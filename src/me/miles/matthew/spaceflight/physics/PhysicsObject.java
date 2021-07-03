@@ -1,6 +1,5 @@
 package me.miles.matthew.spaceflight.physics;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 public abstract class PhysicsObject {
@@ -8,8 +7,8 @@ public abstract class PhysicsObject {
 	
 	protected double mass; // kg
 	
-	protected double xPos;
-	protected double yPos;
+	protected int xPos;
+	protected int yPos;
 
 	protected double xVel; // m/s
 	protected double yVel; // m/s
@@ -62,8 +61,8 @@ public abstract class PhysicsObject {
 		this.yPos = yPos;
 	}
 	
-	public double[] getPos() {
-		return new double[] {xPos, yPos};
+	public int[] getPos() {
+		return new int[] {xPos, yPos};
 	}
 	
 	public void setPos(int xPos, int yPos) {
@@ -83,9 +82,9 @@ public abstract class PhysicsObject {
 	// METHODS
 	
 	/**
-	 * Get the force dute to gravity of attraction to an object in Newtons
+	 * Get the force due to gravity of attraction to an object in Newtons
 	 * @param o the other object being attracted to
-	 * @return the force in newtons which is felt by each object
+	 * @return the force in newtons which is experienced by each object
 	 */
 	public double getAttractionTo(PhysicsObject o) {
 		// F = G[m1*m2/r^2]
