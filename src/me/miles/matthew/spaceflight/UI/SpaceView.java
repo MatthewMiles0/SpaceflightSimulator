@@ -17,7 +17,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 
 import me.miles.matthew.spaceflight.physics.PhysicsObject;
-import me.miles.matthew.spaceflight.physics.PlanetaryObject;
+import me.miles.matthew.spaceflight.physics.CelestialBody;
 import me.miles.matthew.spaceflight.physics.SpaceEnvironment;
 
 @SuppressWarnings("serial")
@@ -36,8 +36,8 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		this.mySpace = space;
 		
 		// TEST
-		mySpace.addBody((PhysicsObject) new PlanetaryObject(13090000000000000000000d, 0, 0, true, 0xFF3333, 0xe33440, "Pluto"));
-		mySpace.addBody((PhysicsObject) new PlanetaryObject(11090000000000000000000d, 20000000, 20000000, true, 0x34ace3, 9883000, "Bluto"));
+		mySpace.addBody((PhysicsObject) new CelestialBody(13090000000000000000000d, 0, 0, true, 0xFF3333, 0xe33440, "Pluto"));
+		mySpace.addBody((PhysicsObject) new CelestialBody(11090000000000000000000d, 20000000, 20000000, true, 0x34ace3, 9883000, "Bluto"));
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, 150, 200, true, 0x33FF33, 50));
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, -150, 150, true, 0x3333FF, 75));
 		
@@ -57,8 +57,8 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
-		int tX = (int) (cX-this.getWidth()/2);
-		int lY = (int) (cY-this.getHeight()/2);
+		int tX = (int) (cX-0.5*this.getWidth()/scale);
+		int lY = (int) (cY-0.5*this.getHeight()/scale);
 		
 		// background
 		g2.setColor(new Color(mySpace.getBackgroundColour()));
@@ -87,8 +87,8 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		int msx = (int) (mouseX / scale - cX);
 		int msy = (int) (mouseY / scale - cX);
 		
-		cX -= msx;
-		cY -= msy;
+		cX += msx;
+		cY += msy;
 		
 		System.out.println(cX+" : "+cY);
 		
