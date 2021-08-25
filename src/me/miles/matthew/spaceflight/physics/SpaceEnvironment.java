@@ -50,7 +50,7 @@ public class SpaceEnvironment {
 			//body.setXVel(5);
 			for (int n = 0; n < bodies.size(); n++) {
 				if (i == n) continue;
-				//body.doGAcceleration(bodies.get(n), millisPassed);
+				body.doGAcceleration(bodies.get(n), millisPassed);
 			}
 			
 			body.physicsTick(millisPassed);

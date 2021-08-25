@@ -50,6 +50,11 @@ public class Runner implements ActionListener {
 			last = now;
 			now = Instant.now().toEpochMilli();
 			long timePassedMillis = now-last;
+			
+			if (timePassedMillis > 1000) {
+				timePassedMillis = 1;
+				System.out.println("Took over a second to perform the previous tick!");
+			}
 			//S/ystem.out.println(timePassedMillis/1000d);
 			env.physicsTick(timePassedMillis);
 		} else if (ae.getSource() == frameUpdate) {

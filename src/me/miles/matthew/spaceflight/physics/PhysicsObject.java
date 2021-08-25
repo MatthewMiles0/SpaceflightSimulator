@@ -77,7 +77,7 @@ public abstract class PhysicsObject {
 	 * @param cY
 	 * @param zoom
 	 */
-	public abstract void draw(Graphics2D g2, int cX, int cY, double zoom);
+	public abstract void draw(Graphics2D g2, double lX, double tY, double zoom);
 	
 	// METHODS
 	
@@ -96,6 +96,7 @@ public abstract class PhysicsObject {
 	
 	public void doGAcceleration(PhysicsObject o, long timePassedMillis) {
 		double massProd = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass();
+		
 		
 		double xAcc = massProd / Math.pow(this.xPos-o.getXPos(), 2);
 		double yAcc = massProd / Math.pow(this.yPos-o.getYPos(), 2);
@@ -126,7 +127,7 @@ public abstract class PhysicsObject {
 	
 	public void physicsTick(long timePassedMillis) {
 		xPos += xVel*timePassedMillis/1000d;
-		//System.out.println(xPos);
+		System.out.println(xPos);
 		yPos += yVel*timePassedMillis/1000d;
 	};
 	
