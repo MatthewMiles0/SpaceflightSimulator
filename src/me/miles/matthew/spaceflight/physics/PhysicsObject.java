@@ -94,12 +94,43 @@ public abstract class PhysicsObject {
 		return PhysicsObject.GRAVITATIONAL_CONSTANT*this.mass*o.getMass()/distanceSquared;
 	}
 	
+	/**
+	 * Returns the angle to another object in degrees
+	 * @param targetX
+	 * @param targetY
+	 * @return angle in degrees
+	 */
+	public float getAngleTo(double targetX, double targetY) {
+	    float angle = (float) Math.toDegrees(Math.atan2(targetY - this.getYPos(), targetX - this.getXPos()));
+
+	    if (angle < 0) angle += 360;
+
+	    return angle;
+	}
+	
 	public void doGAcceleration(PhysicsObject o, long timePassedMillis) {
-		double massProd = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass();
+		double xD = Math.abs(this.xPos-o.getXPos());
+		double yD = Math.abs(this.yPos-o.getYPos());
 		
+		double force = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass()/(Math.sqrt(xD*xD+yD*yD));
 		
+		//double angle = getAngleTo(o.getXPos(), o.getYPos());
+		
+		//TODO: Trig
+		double xAcc = force * xD / (xD + yD);
+		double yAcc = force * yD / (xD + yD);
+		
+		/* This isn't how gravity works:
 		double xAcc = massProd / Math.pow(this.xPos-o.getXPos(), 2);
 		double yAcc = massProd / Math.pow(this.yPos-o.getYPos(), 2);
+		*/
+				
+		if (this.mass == 13090000000000000000000d) System.out.println(xAcc);
+		
+		// F = G*(m1*m2)/(r^2)
+		// F = m*a
+		// a = F/m
+		// a = (G*m2)/(r^2)
 		
 		xVel += xAcc*timePassedMillis/1000d;
 		yVel += yAcc*timePassedMillis/1000d;
@@ -127,7 +158,7 @@ public abstract class PhysicsObject {
 	
 	public void physicsTick(long timePassedMillis) {
 		xPos += xVel*timePassedMillis/1000d;
-		System.out.println(xPos);
+		//S/ystem.out.println(xPos);
 		yPos += yVel*timePassedMillis/1000d;
 	};
 	

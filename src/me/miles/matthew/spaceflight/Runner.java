@@ -3,8 +3,10 @@ package me.miles.matthew.spaceflight;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.time.Instant;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -25,18 +27,25 @@ public class Runner implements ActionListener {
 	}
 	
 	public Runner() {
+		// Create window
 		window = new JFrame();
 		window.setSize(1000, 1000);
 		window.setTitle("Spaceflight Simulator");
-		
-		env = new SpaceEnvironment();
-		view = new SpaceView(env);
-		window.add(view);
-		
 		window.setMinimumSize(new Dimension(100,100));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
 		
+		// Initiate space stuff
+		env = new SpaceEnvironment();
+		view = new SpaceView(env);
+		window.add(view);
+		
+		// Icon image
+		URL imgURL = getClass().getResource("/me/miles/matthew/spaceflight/space1.png");
+		ImageIcon icon = new ImageIcon(imgURL);
+		window.setIconImage(icon.getImage());
+		
+		// Timers
 		physicsUpdate = new Timer(14, this);
 		physicsUpdate.start();
 		

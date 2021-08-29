@@ -45,6 +45,7 @@ public class SpaceEnvironment {
 	}
 	
 	public void physicsTick(long millisPassed) {
+		millisPassed /= 20d;
 		for (int i = 0; i < getBodyCount(); i++) {
 			PhysicsObject body = bodies.get(i);
 			//body.setXVel(5);

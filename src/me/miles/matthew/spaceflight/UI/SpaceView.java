@@ -38,13 +38,13 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		this.mySpace = space;
 		
 		// TEST
-		CelestialBody pluto = new CelestialBody(13090000000000000000000d, 0, 0, true, 0xFF3333, 14890048, "Pluto");
+		CelestialBody pluto = new CelestialBody(13090000000000000000000d, 0, 0, true, 0xFF3333, 1188300, "Pluto");
 		
 		mySpace.addBody((PhysicsObject) pluto);
 		
 		pluto.setXVel(1489004);
 		
-		mySpace.addBody((PhysicsObject) new CelestialBody(11090000000000000000000d, 20000000, 20000000, true, 0x34ace3, 9883000, "Bluto"));
+		mySpace.addBody((PhysicsObject) new CelestialBody(1596980000000000000000d*1000000000d, 20000000, 20000000, true, 0x34ace3, 606000, "Charon"));
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, 150, 200, true, 0x33FF33, 50));
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, -150, 150, true, 0x3333FF, 75));
 		
@@ -119,7 +119,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		}
 		
 		// crosshairs
-		g2.setColor(new Color(255, 255, 255, 128));
+		g2.setColor(new Color(255, 255, 255, 200)); // 50% opacity
 		g2.fillRect(middleX-12, middleY-1, 8, 2);
 		g2.fillRect(middleX+4, middleY-1, 8, 2);
 		g2.fillRect(middleX-1, middleY-12, 2, 8);
@@ -131,70 +131,32 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent mwe) {
-		int dir = mwe.getWheelRotation();
+		int dir = mwe.getWheelRotation(); // can also be larger value than 1 for multiple lines scrolled if applicable
 		
 		if (dir == 0) return;
 		
 		int mouseX = mwe.getX();
 		int mouseY = mwe.getY();
 		
-		double zoom = 1.0d-(0.1d*dir);
+		double zoom = 1.0d-(0.1d*dir); // +-10% zoom. % = smooth zooming
 		
+		// figures out original and new position of mouse in terms of space coords. Finds the difference (how much it has shifted by) and undoes it afterwards.
+		// anchor point (the point which should stay at the same position on the screen)
 		double[] anchorCoords = toSpaceCoords(mouseX, mouseY);
 		
-		/*
-		double d2acX = anchorCoords[0] - cX; // distance to anchor coords x
-		double d2acY = anchorCoords[1] - cX;
-		
-		cX = anchorCoords[0];
-		cY = anchorCoords[1];
-		*/
-		
+		// scale
 		scale *= zoom;
 		
+		// find new position of mouse
 		double[] shiftedCoords = toSpaceCoords(mouseX, mouseY);
 		
+		// find shift required to get back to the anchor
 		double shiftX = anchorCoords[0] - shiftedCoords[0];
 		double shiftY = anchorCoords[1] - shiftedCoords[1];
 		
+		// shifts the centre position accordingly
 		cX += shiftX;
 		cY += shiftY;
-		
-		//S/ystem.out.println(Arrays.toString(toSpaceCoords(0, 0)));
-		
-		/*
-		// translate mouse pos to centre
-		
-		cX -= (mouseX - this.getWidth()/2) * scale;
-		cY -= (mouseY - this.getHeight()/2) * scale;
-		
-		// alter scale
-		
-		scale *= zoom;
-		
-		// translate back with new zoom
-		
-		cX += (mouseX - this.getWidth()/2) * scale;
-		cY += (mouseY - this.getHeight()/2) * scale;
-		
-		
-		//cX *= a;
-		
-		//cX -= mouseX / (scale * zoom) - mouseX/scale;
-		//cY -= mouseY / (scale * zoom) - mouseY/scale;
-		
-		// (cX, cY) is now the top left corner of the screen in space coordinates
-		
-		//cX -= (mouseX - this.getWidth()/2d) * scale;
-		//cY -= (mouseY - this.getHeight()/2d) * scale;
-		
-		//scale *= zoom;
-		
-		// https://stackoverflow.com/a/3151987/5627381
-		//zoom -= 0.1d * dir;
-		
-		
-		*/
 		
 	}
 
