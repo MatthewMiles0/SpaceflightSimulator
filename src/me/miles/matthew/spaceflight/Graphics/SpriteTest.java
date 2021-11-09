@@ -50,7 +50,7 @@ public class SpriteTest {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            sprite.rotate(0.1f);
+            // sprite.rotate(0.1f);
             repaint();
         }
     }
@@ -62,9 +62,17 @@ public class SpriteTest {
     // constructor
     public SpriteTest() {
         // create a new sprite
-        Sprite sprite = new Sprite("src/me/miles/matthew/spaceflight/Textures/Planets/PlaceholderPlanet.png", new Vector2d(), new Vector2d(100, 100));
+        Sprite sprite = new Sprite(new Vector2d(), new Vector2d(100, 100));
+        sprite.setTexture("src/me/miles/matthew/spaceflight/Textures/Planets/PlaceholderPlanet.png");
+
+        AnimatedSprite sprite2 = new AnimatedSprite(new Vector2d(), new Vector2d(600, 200), 3);
+        sprite2.addFrames("src/me/miles/matthew/spaceflight/Textures/Planets/Earth.png", 4);
         //sprite.rotate(45);
 
+        Sprite custom = new Sprite(new Vector2d(), new Vector2d(300, 300));
+        PlanetGen.generatePlanet(100, "", 0xFFAA00FF, "src/me/miles/matthew/spaceflight/Textures/Planets/x.png");
+        custom.setTexture("src/me/miles/matthew/spaceflight/Textures/Planets/x.png");
+        
         // create a JFrame
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +80,7 @@ public class SpriteTest {
         frame.setTitle("Sprite Test");
 
         // create a JPanel
-        SpriteTestDisplay panel = new SpriteTestDisplay(sprite);
+        SpriteTestDisplay panel = new SpriteTestDisplay(custom);
 
         frame.add(panel);
         frame.setVisible(true);

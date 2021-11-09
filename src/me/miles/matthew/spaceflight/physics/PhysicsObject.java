@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import me.miles.matthew.spaceflight.Utils.Vector2d;
 
 public abstract class PhysicsObject {
-	public static double GRAVITATIONAL_CONSTANT = 0.0000000000667430d; // nm^2/kg^2
+	public static final double GRAVITATIONAL_CONSTANT = 0.0000000000667430d; // nm^2/kg^2
 	
 	protected double mass; // kg
 	

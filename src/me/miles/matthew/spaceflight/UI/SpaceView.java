@@ -17,7 +17,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.time.Instant;
 
 import javax.swing.JPanel;
 
@@ -33,7 +32,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	private double cY = -57.9E9;
 	PhysicsObject focus = null;
 	Point2D.Double lastFocusPos = null;
-	private long timeOfLastFrame;
+	// private long timeOfLastFrame;
 	
 	// previous frame mouse position for dragging
 	private int prevMX;
@@ -43,7 +42,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	public SpaceView(SpaceEnvironment space) {
 		this.mySpace = space;
 		
-		long timePassed = Instant.now().toEpochMilli()-timeOfLastFrame;
+		// long timePassed = Instant.now().toEpochMilli()-timeOfLastFrame;
 		
 		/*
 		// TEST
@@ -139,7 +138,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	 * @param yPos
 	 * @return
 	 */
-	private int[] toScreenCoords(double xPos, double yPos) { //TODO: Not tested
+	public int[] toScreenCoords(double xPos, double yPos) { //TODO: Not tested
 		xPos -= cX;
 		yPos -= cY;
 		
@@ -162,11 +161,11 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 		
 		
-		long timePassed = Instant.now().toEpochMilli()-timeOfLastFrame;
+		// long timePassed = Instant.now().toEpochMilli()-timeOfLastFrame;
 		
 		//S/ystem.out.println(1000f/timePassed);
 		
-		timeOfLastFrame = Instant.now().toEpochMilli();
+		// timeOfLastFrame = Instant.now().toEpochMilli();
 		
 		if (focus != null) {
 			cX += focus.getXPos()-lastFocusPos.x;

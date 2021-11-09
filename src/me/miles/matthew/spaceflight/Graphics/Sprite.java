@@ -15,18 +15,21 @@ public class Sprite {
     // A class which represents a sprite on the screen.
     // It has a position, a size, a rotation, and a texture.
     
-    private BufferedImage image;
-    private Vector2d position;
+    protected BufferedImage image;
+    protected Vector2d position;
 
     // The size of the sprite, in pixels.
-    private Vector2d size;
-    private float rotation;
+    protected Vector2d size;
+    protected float rotation;
     // private BufferedImage displayImage;
+
+    protected boolean hasTexture = false;
 
     public Sprite(String path) {
         File file = new File(path);
         try {
            image = ImageIO.read(file);
+           hasTexture = true;
         } catch (Exception e) {
             // generate errorimage
            image = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
@@ -41,8 +44,7 @@ public class Sprite {
         this.size = new Vector2d(image.getWidth(), image.getHeight());
     }
 
-    public Sprite(String path, Vector2d position, Vector2d size) {
-        this(path);
+    public Sprite(Vector2d position, Vector2d size) {
         this.position = position;
         this.size = size;
     }
@@ -72,12 +74,63 @@ public class Sprite {
         //rx is the x coordinate for rotation, ry is the y coordinate for rotation, and angle
         //is the angle to rotate the image. If you want to rotate around the center of an image,
         //use the image's center x and y coordinates for rx and ry.
-        AffineTransform a = AffineTransform.getRotateInstance(rotation, xPos+image.getWidth()/2, yPos+image.getHeight()/2);
+        AffineTransform a = AffineTransform.getRotateInstance(rotation, xPos+size.x/2, yPos+size.y/2); // x+image.getWidth()/2, y+image.getHeight()/2
         //Set our Graphics2D object to the transform
         g2.setTransform(a);
         //Draw our image like normal
-        g2.drawImage(image, xPos, yPos, (int) size.x, (int) size.y, null);
+        g2.drawImage(image, (int) xPos, (int) yPos, (int) size.x, (int) size.y, null);
         //Reset our graphics object so we can draw with it again.
         g2.setTransform(backup);
+    }
+
+    public void setPosition(Vector2d position) {
+        this.position = position;
+    }
+
+    public Vector2d getPosition() {
+        return position;
+    }
+
+    public Vector2d getSize() {
+        return size;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public boolean hasTexture() {
+        return hasTexture;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public void setSize(Vector2d size) {
+        this.size = size;
+    }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
+
+    public void setTexture(String filePath) {
+        File file = new File(filePath);
+        try {
+           image = ImageIO.read(file);
+           hasTexture = true;
+        } catch (Exception e) {
+        // generate errorimage
+           image = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+           image.setRGB(0, 0, 0xFFFF00FF);
+           image.setRGB(1, 1, 0xFFFF00FF);
+           image.setRGB(0, 1, 0xFF000000);
+           image.setRGB(1, 0, 0xFF000000);
+        }
     }
 }
