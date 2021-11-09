@@ -27,13 +27,13 @@ public class Runner implements ActionListener {
 	}
 	
 	public Runner() {
+		
 		// Create window
 		window = new JFrame();
 		window.setSize(1000, 1000);
 		window.setTitle("Spaceflight Simulator");
 		window.setMinimumSize(new Dimension(100,100));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
 		
 		// Initiate space stuff
 		env = new SpaceEnvironment();
@@ -46,11 +46,14 @@ public class Runner implements ActionListener {
 		window.setIconImage(icon.getImage());
 		
 		// Timers
-		physicsUpdate = new Timer(14, this);
+		physicsUpdate = new Timer(7, this);
 		physicsUpdate.start();
 		
 		frameUpdate = new Timer(14, this);
 		frameUpdate.start();
+
+		// Start rendering
+		window.setVisible(true);
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class Runner implements ActionListener {
 				System.out.println("Took over a second to perform the previous tick!");
 			}
 			//S/ystem.out.println(timePassedMillis/1000d);
-			env.physicsTick(timePassedMillis);
+			env.physicsTick(timePassedMillis, 1000000);
 		} else if (ae.getSource() == frameUpdate) {
 			view.refresh();
 		}

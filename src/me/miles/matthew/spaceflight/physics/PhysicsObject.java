@@ -2,24 +2,30 @@ package me.miles.matthew.spaceflight.physics;
 
 import java.awt.Graphics2D;
 
+import me.miles.matthew.spaceflight.Utils.Vector2d;
+
 public abstract class PhysicsObject {
 	public static double GRAVITATIONAL_CONSTANT = 0.0000000000667430d; // nm^2/kg^2
 	
 	protected double mass; // kg
 	
-	protected int xPos;
-	protected int yPos;
+	protected Vector2d position; // m
 
 	protected double xVel; // m/s
 	protected double yVel; // m/s
 	
 	// Setters and getters
 	
-	public PhysicsObject(double mass, int xPos, int yPos) {
-		this.mass = mass;
-		this.xPos = xPos;
-		this.yPos = yPos;
+	public PhysicsObject(double mass, double xPos, double yPos) {
+		this(mass, new Vector2d(xPos, yPos));
 	}
+
+	public PhysicsObject(double mass, Vector2d position) {
+		this.mass = mass;
+		this.position = position;
+	}
+	
+	public abstract boolean isClickedOn(double lX, double tY, int xClick, int yClick, double zoom);
 	
 	public double getMass() {
 		return mass;
@@ -46,28 +52,31 @@ public abstract class PhysicsObject {
 	}
 	
 	public double getXPos() {
-		return xPos;
+		return position.x;
 	}
 
-	public void setXPos(int xPos) {
-		this.xPos = xPos;
+	public void setXPos(double xPos) {
+		this.position.x = xPos;
 	}
 
 	public double getYPos() {
-		return yPos;
+		return position.y;
 	}
 
-	public void setYPos(int yPos) {
-		this.yPos = yPos;
+	public void setYPos(double yPos) {
+		this.position.y = yPos;
 	}
 	
-	public int[] getPos() {
-		return new int[] {xPos, yPos};
+	public Vector2d getPos() {
+		return position;
 	}
 	
-	public void setPos(int xPos, int yPos) {
-		this.xPos = xPos;
-		this.yPos = yPos;
+	public void setPos(double xPos, double yPos) {
+		this.position = new Vector2d(xPos, yPos);
+	}
+
+	public void setPos(Vector2d pos) {
+		this.position = pos;
 	}
 	
 	/**
@@ -89,7 +98,7 @@ public abstract class PhysicsObject {
 	public double getAttractionTo(PhysicsObject o) {
 		// F = G[m1*m2/r^2]
 		
-		double distanceSquared = Math.pow(this.xPos-o.getXPos(), 2) + Math.pow(this.yPos-o.getYPos(), 2);
+		double distanceSquared = Math.pow(this.position.x-o.getXPos(), 2) + Math.pow(this.position.y-o.getYPos(), 2);
 		
 		return PhysicsObject.GRAVITATIONAL_CONSTANT*this.mass*o.getMass()/distanceSquared;
 	}
@@ -100,40 +109,37 @@ public abstract class PhysicsObject {
 	 * @param targetY
 	 * @return angle in degrees
 	 */
-	public float getAngleTo(double targetX, double targetY) {
-	    float angle = (float) Math.toDegrees(Math.atan2(targetY - this.getYPos(), targetX - this.getXPos()));
-
-	    if (angle < 0) angle += 360;
+	public double getAngleTo(double targetX, double targetY) {
+	    double angle = Math.atan2(targetY - this.getYPos(), targetX - this.getXPos());
 
 	    return angle;
 	}
 	
-	public void doGAcceleration(PhysicsObject o, long timePassedMillis) {
-		double xD = Math.abs(this.xPos-o.getXPos());
-		double yD = Math.abs(this.yPos-o.getYPos());
+	public void doGAcceleration(PhysicsObject o, long timePassedMillis, long simulationSpeed) {
+		double xD = Math.abs(this.position.x-o.getXPos());
+		double yD = Math.abs(this.position.y-o.getYPos());
 		
-		double force = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass()/(Math.sqrt(xD*xD+yD*yD));
+		double force = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass()/(xD*xD+yD*yD);
 		
-		//double angle = getAngleTo(o.getXPos(), o.getYPos());
+		double angle = getAngleTo(o.getXPos(), o.getYPos());
 		
-		//TODO: Trig
-		double xAcc = force * xD / (xD + yD);
-		double yAcc = force * yD / (xD + yD);
+		double xAcc = force * Math.cos(angle);
+		double yAcc = force * Math.sin(angle);
 		
 		/* This isn't how gravity works:
 		double xAcc = massProd / Math.pow(this.xPos-o.getXPos(), 2);
 		double yAcc = massProd / Math.pow(this.yPos-o.getYPos(), 2);
 		*/
-				
-		if (this.mass == 13090000000000000000000d) System.out.println(xAcc);
+		
+		if (this.mass == 1586000000000000000000d) System.out.println(angle);
 		
 		// F = G*(m1*m2)/(r^2)
 		// F = m*a
 		// a = F/m
 		// a = (G*m2)/(r^2)
 		
-		xVel += xAcc*timePassedMillis/1000d;
-		yVel += yAcc*timePassedMillis/1000d;
+		xVel += xAcc*timePassedMillis*simulationSpeed/1000d;
+		yVel += yAcc*timePassedMillis*simulationSpeed/1000d;
 	}
 	
 	/*
@@ -156,10 +162,10 @@ public abstract class PhysicsObject {
 		
 	}*/
 	
-	public void physicsTick(long timePassedMillis) {
-		xPos += xVel*timePassedMillis/1000d;
+	public void physicsTick(long timePassedMillis, long simulationSpeed) {
+		this.position.x += xVel*timePassedMillis*simulationSpeed/1000d;
 		//S/ystem.out.println(xPos);
-		yPos += yVel*timePassedMillis/1000d;
+		this.position.y += yVel*timePassedMillis*simulationSpeed/1000d;
 	};
 	
 }
