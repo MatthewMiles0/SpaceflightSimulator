@@ -18,7 +18,7 @@ public class PlanetGen {
      * @param color The colour of the planet
      * @param fileName The name of the file to save the image to
      */
-    public static void generatePlanet(int radius, String type, int color, String fileName) {
+    public static void generatePlanet(int radius, String type, int color1, int color2, String fileName) {
         // Generates an image of a planet with a given radius, type and colour and saves it to an image file
         // radius: radius of the planet
         // type: type of planet (terrestrial, gas, ice)
@@ -32,12 +32,16 @@ public class PlanetGen {
         Graphics2D g2 = (Graphics2D) planet.getGraphics();
         
         // Set the colour of the graphics context
-        g2.setColor(new Color(color));
+        g2.setColor(new Color(color1));
         
         // Draw the planet
         g2.fillOval(0, 0, radius*2, radius*2);
 
-        planet = layerImage(getWorleyNoise(radius*2, radius*2, 10), planet);
+        planet = layerImage(getWorleyNoise(radius*2, radius*2, 10, color2), planet, "normal");
+        // planet = layerImage(getWorleyNoise(radius*2, radius*2, 4, color2), planet);
+
+        // planet = laeygetWorleyNoise(radius*2, radius*2, 5, color2);
+        // planet = getWorleyNoise(radius*2, radius*2, 4, color2);
 
         // Save the planet to an image file
         try {
@@ -57,7 +61,7 @@ public class PlanetGen {
         return (int) (Math.random() * (max - min)) + min;
     }
 
-    private static BufferedImage getWorleyNoise(int sizeX, int sizeY, int density) {
+    private static BufferedImage getWorleyNoise(int sizeX, int sizeY, int density, int color) {
         int freqX = sizeX/density;
         int freqY = sizeY/density;
         
@@ -89,14 +93,24 @@ public class PlanetGen {
                         }
                     }
                 }
-                int val = 0xFF*bestDist/(freqX*3);
-                image.setRGB(x, y, 0xFF000000+val+0x100*val+0x10000*val);
+                float p = bestDist/((float) freqX*3);
+                int c = (
+                    ((int) ((color & 0xFF)*p) & 0xFF) +
+                    ((int) ((color & 0xFF00)*p) & 0xFF00) +
+                    ((int) ((color & 0xFF0000)*p) & 0xFF0000) +
+                    ((int) (0xFF*p) << 24)
+                    ) ;
+                if ((c & 0x00FF0000) == 0x23540000 || (p > 0.1 && p < 0.2)) {
+                    // System.out.println(p+" "+Integer.toHexString(c));;
+                    // System.out.println(Integer.toHexString(((int) (0xFF*p))));
+                }
+                image.setRGB(x, y, c);
             }
         }
         return image;
     }
 
-    private static BufferedImage layerImage(BufferedImage image1, BufferedImage image2) {
+    private static BufferedImage layerImage(BufferedImage image1, BufferedImage image2, String type) {
         // Layers an image on top of another image
         // image1: image to be layered on top of image2
         // image2: image to be layered on top of image1
@@ -113,6 +127,14 @@ public class PlanetGen {
             for (int y = 0; y < image.getHeight(); y++) {
                 int rgb1 = image1.getRGB(x, y);
                 int rgb2 = image2.getRGB(x, y);
+                int r1 = rgb1 & 0xFF;
+                int g1 = (rgb1 & 0xFF00) >> 8;
+                int b1 = (rgb1 & 0xFF0000) >> 16;
+                int a1 = (rgb1 & 0xFF000000) >> 24;
+                int r2 = rgb2 & 0xFF;
+                int g2 = (rgb2 & 0xFF00) >> 8;
+                int b2 = (rgb2 & 0xFF0000) >> 16;
+                int a2 = (rgb2 & 0xFF000000) >> 24;
 
                 // System.out.println(Integer.toHexString(rgb1));
                 // System.out.println(Integer.toHexString(rgb2));
@@ -124,13 +146,76 @@ public class PlanetGen {
                 //     (rgb1 & 0xFF0000) >> 16,
                 //     (rgb1 & 0xFF000000) >> 24 & 0xFF
                 // );
-
-                int c = (
-                    ((((rgb1 & 0xFF) + (rgb2 & 0xFF)) >> 1) & 0xFF) +
-                    ((((rgb1 & 0xFF00) + (rgb2 & 0xFF00)) >> 1) & 0xFF00) +
-                    ((((rgb1 & 0xFF0000) + (rgb2 & 0xFF0000)) >> 1) & 0xFF0000) +
-                    ((rgb1 & 0xFF000000) & (rgb2 & 0xFF000000))
-                );
+                switch (type) {
+                    case "normal":
+                        // image.setRGB(x, y, 
+                        //     ((r1*a1 + r2*(255-a2))/255) << 16 |
+                        //     ((g1*a1 + g2*(255-a2))/255) << 8 |
+                        //     ((b1*a1 + b2*(255-a2))/255) | 0xFF000000
+                        // );
+                        if ((a1+a2) > 0) {
+                            float a1p = a1/(a1+a2);
+                            float a2p = a2/(a1+a2);
+                            image.setRGB(x, y,
+                            (int) (r1*a1p + r2*a2p) << 16 |
+                            (int) (g1*a1p + g2*a2p) << 8 | 
+                            (int) (b1*a1p + b2*a2p) |
+                            ((a1+a2) << 24)
+                            );
+                        } else {
+                            image.setRGB(x, y, 0x00000000);
+                        }
+                        
+                        break;
+                    case "add":
+                        image.setRGB(x, y, (
+                            (Math.min((((rgb1 & 0xFF) + (rgb2 & 0xFF))), 0xFF) & 0xFF) +
+                            (Math.min((((rgb1 & 0xFF00) + (rgb2 & 0xFF00))), 0xFF00) & 0xFF00) +
+                            (Math.min((((rgb1 & 0xFF0000) + (rgb2 & 0xFF0000))), 0xFF0000) & 0xFF0000) +
+                            0xFF000000
+                            
+                            //((rgb1 & 0xFF000000) & (rgb2 & 0xFF000000))
+                        ));
+                        break;
+                    case "subtract":
+                        image.setRGB(x, y, rgb1 - rgb2);
+                        break;
+                    case "multiply":
+                        image.setRGB(x, y, rgb1 * rgb2);
+                        break;
+                    case "divide":
+                        image.setRGB(x, y, rgb1 / rgb2);
+                        break;
+                    case "average":
+                        image.setRGB(x, y, (
+                            ((((rgb1 & 0xFF) + (rgb2 & 0xFF)) >> 1) & 0xFF) +
+                            ((((rgb1 & 0xFF00) + (rgb2 & 0xFF00)) >> 1) & 0xFF00) +
+                            ((((rgb1 & 0xFF0000) + (rgb2 & 0xFF0000)) >> 1) & 0xFF0000) +
+                            ((rgb1 & 0xFF000000) & (rgb2 & 0xFF000000))
+                        ));
+                        break;
+                    case "screen":
+                        image.setRGB(x, y, 
+                        (255 - (((255 - r1) * (255 - r2)) >> 8) & 0xFF) +
+                        (255 - (((255 - g1) * (255 - g2)) >> 8) & 0xFF) << 8 +
+                        (255 - (((255 - b1) * (255 - b2)) >> 8) & 0xFF) << 16 +
+                        (255 - (((255 - a1) * (255 - a2)) >> 8) & 0xFF) << 24
+                        );
+                        // System.out.println(Integer.toHexString(rgb1)+" + "+Integer.toHexString(rgb2)+" => "+Integer.toHexString(image.getRGB(x, y)));
+                        break;
+                    
+                    default:
+                    System.out.println("Invalid type");
+                        return image1;
+                        // image.setRGB(x, y, rgb1);
+                        // break;
+                }
+                // int c = (
+                //     ((((rgb1 & 0xFF) + (rgb2 & 0xFF)) >> 1) & 0xFF) +
+                //     ((((rgb1 & 0xFF00) + (rgb2 & 0xFF00)) >> 1) & 0xFF00) +
+                //     ((((rgb1 & 0xFF0000) + (rgb2 & 0xFF0000)) >> 1) & 0xFF0000) +
+                //     ((rgb1 & 0xFF000000) & (rgb2 & 0xFF000000))
+                // );
                 // System.out.println(Integer.toHexString(rgb1)+" + "+Integer.toHexString(rgb2)+" = "+Integer.toHexString(c));
 
                 // Color col1 = new Color(rgb1);
@@ -144,7 +229,7 @@ public class PlanetGen {
                     (pixel1.getBlue()+pixel2.getBlue())/2
                     ).getRGB() + (Math.min(image1.getRGB(x, y), image2.getRGB(x, y)) & 0xFF000000));*/
 
-                image.setRGB(x, y, c);
+                // image.setRGB(x, y, c);
             }
         }
 
