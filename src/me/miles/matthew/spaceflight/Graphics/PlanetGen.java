@@ -37,11 +37,11 @@ public class PlanetGen {
         // Draw the planet
         g2.fillOval(0, 0, radius*2, radius*2);
 
-        planet = layerImage(getWorleyNoise(radius*2, radius*2, 10, color2), planet, "normal");
+        // planet = layerImage(getWorleyNoise(radius*2, radius*2, 5, color1), getWorleyNoise(radius*2, radius*2, 10, color2), "normal");
         // planet = layerImage(getWorleyNoise(radius*2, radius*2, 4, color2), planet);
 
         // planet = laeygetWorleyNoise(radius*2, radius*2, 5, color2);
-        // planet = getWorleyNoise(radius*2, radius*2, 4, color2);
+        planet = getWorleyNoise(radius*2, radius*2, 8, color2);
 
         // Save the planet to an image file
         try {
@@ -86,18 +86,19 @@ public class PlanetGen {
                         if (i >= 0 && i < points.length && j >= 0 && j < points[0].length) {
                             int dx = x - points[i][j][0];
                             int dy = y - points[i][j][1];
-                            int dist = (int) Math.sqrt(dx*dx + dy*dy);
+                            int dist = dx*dx + dy*dy;
                             if (dist < bestDist) {
                                 bestDist = dist;
                             }
                         }
                     }
                 }
-                float p = bestDist/((float) freqX*3);
+                bestDist = (int) Math.sqrt(bestDist);
+                float p = bestDist/(float) (freqX*3);
                 int c = (
-                    ((int) ((color & 0xFF)*p) & 0xFF) +
-                    ((int) ((color & 0xFF00)*p) & 0xFF00) +
-                    ((int) ((color & 0xFF0000)*p) & 0xFF0000) +
+                    ((int) ((color & 0xFF)*p) & 0xFF) |
+                    ((int) ((color & 0xFF00)*p) & 0xFF00) |
+                    ((int) ((color & 0xFF0000)*p) & 0xFF0000) |
                     ((int) (0xFF*p) << 24)
                     ) ;
                 if ((c & 0x00FF0000) == 0x23540000 || (p > 0.1 && p < 0.2)) {
@@ -136,6 +137,9 @@ public class PlanetGen {
                 int b2 = (rgb2 & 0xFF0000) >> 16;
                 int a2 = (rgb2 & 0xFF000000) >> 24;
 
+                if (a1 < 0) a1 += 256;
+                if (a2 < 0) a2 += 256;
+
                 // System.out.println(Integer.toHexString(rgb1));
                 // System.out.println(Integer.toHexString(rgb2));
                 // System.out.println(Integer.toHexString((rgb1 & 0xFF000000) >> 24));
@@ -154,18 +158,18 @@ public class PlanetGen {
                         //     ((b1*a1 + b2*(255-a2))/255) | 0xFF000000
                         // );
                         if ((a1+a2) > 0) {
-                            float a1p = a1/(a1+a2);
-                            float a2p = a2/(a1+a2);
+                            float a1p = a1/((float) a1+a2);
+                            float a2p = a2/((float) a1+a2);
+                            // System.out.println(a1+" "+a2+" "+a1p+" "+a2p);
                             image.setRGB(x, y,
                             (int) (r1*a1p + r2*a2p) << 16 |
                             (int) (g1*a1p + g2*a2p) << 8 | 
                             (int) (b1*a1p + b2*a2p) |
-                            ((a1+a2) << 24)
+                            (Math.min(a1+a2, 0xFF) << 24)
                             );
-                        } else {
-                            image.setRGB(x, y, 0x00000000);
-                        }
+                        } else image.setRGB(x, y, 0x00000000);
                         
+
                         break;
                     case "add":
                         image.setRGB(x, y, (
