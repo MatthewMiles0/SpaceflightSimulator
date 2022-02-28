@@ -68,7 +68,7 @@ public class Runner implements ActionListener {
 				System.out.println("Took over a second to perform the previous tick!");
 			}
 			//S/ystem.out.println(timePassedMillis/1000d);
-			env.physicsTick(timePassedMillis, 1000000);
+			env.physicsTick(timePassedMillis, 100000);
 		} else if (ae.getSource() == frameUpdate) {
 			view.refresh();
 		}

@@ -166,6 +166,8 @@ public abstract class PhysicsObject {
 		this.position.x += xVel*timePassedMillis*simulationSpeed/1000d;
 		//S/ystem.out.println(xPos);
 		this.position.y += yVel*timePassedMillis*simulationSpeed/1000d;
-	};
+
+		System.out.println(this.position.x+", "+this.position.x);
+	}
 	
 }

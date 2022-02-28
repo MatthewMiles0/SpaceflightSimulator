@@ -81,9 +81,10 @@ public class CelestialBody extends PhysicsObject {
 		ys[ys.length-1] = (int) Math.round((this.position.y-tY)*zoom); 
 		
 		// draw trail
+		g2.setColor(new Color(this.colour));
 		g2.drawPolyline(xs, ys, xs.length);
 		
-		g2.setColor(new Color(this.colour));
+		// g2.setColor(new Color(this.colour));
 		g2.fillOval(
 				(int) Math.round((this.position.x-radius-lX)*zoom),
 				(int) Math.round((this.position.y-radius-tY)*zoom),

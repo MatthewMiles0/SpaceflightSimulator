@@ -57,8 +57,21 @@ public class SpaceEnvironment {
 		satellite.setYVel(centre.getYVel());
 		// v = sqrt( GM/r );
 	}
+
+	public void autoDoubleOrbit(CelestialBody satellite, CelestialBody centre, CelestialBody master) {
+		// figure out the velocity required for the satellite to maintain a stable orbit
+		autoOrbit(satellite, master);
+
+		double distance = Math.sqrt(Math.pow(satellite.getXPos()-centre.getXPos(), 2)+Math.pow(satellite.getYPos()-centre.getYPos(), 2));
+		double velocity = Math.sqrt(PhysicsObject.GRAVITATIONAL_CONSTANT*centre.mass/distance);
+		
+		satellite.setXVel(satellite.getXVel()+velocity);
+		satellite.setYVel(satellite.getYVel());
+		// v = sqrt( GM/r );
+	}
 	
 	public void physicsTick(long millisPassed, long simulationSpeed) {
+		//S/ystem.out.println("Physics tick passed "+ millisPassed+" speed "+ simulationSpeed);
 		
 		//S/ystem.out.println(1000f/millisPassed);
 		//millisPassed /= 20d;

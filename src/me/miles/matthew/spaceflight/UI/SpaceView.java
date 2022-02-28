@@ -79,7 +79,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		CelestialBody sun 		= new CelestialBody(1.989E30d, 	0, 0, 			false, 	0xFFFF00, 696340000, 	"Sun",		1);
 		CelestialBody mercury 	= new CelestialBody(0.33E24, 	0, -57.9E9, 	true, 	0xA8A3A0, 4879000, 		"Mercury", 	2);
 		CelestialBody venus 	= new CelestialBody(4.87E24, 	0, -108.2E9, 	true, 	0xD2B49F, 12104000, 	"Venus", 	2);
-		CelestialBody earth 	= new CelestialBody(5.97E24, 	0, -149.6E9, 	true, 	0x24A125, 12756000, 	"Earth",	2);
+		CelestialBody earth 	= new CelestialBody(5.97E24, 	0, -149.6E9, 	true, 	0x0ab6bf, 12756000, 	"Earth",	2);
 		CelestialBody moon 		= new CelestialBody(0.073E24,	0,	-149.984E9,	true, 	0xAAAAAA, 3475000, 		"Moon", 	3);
 		
 		mySpace.addBody(sun);
@@ -91,11 +91,11 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		mySpace.autoOrbit(mercury, sun);
 		mySpace.autoOrbit(venus, sun);
 		mySpace.autoOrbit(earth, sun);
-		mySpace.autoOrbit(moon, earth);
+		mySpace.autoDoubleOrbit(moon, earth, sun);
 		
 		
-		this.setFocus(sun);
-		this.goTo(sun);
+		this.setFocus(earth);
+		this.goTo(earth);
 		
 		
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, 150, 200, true, 0x33FF33, 50));
