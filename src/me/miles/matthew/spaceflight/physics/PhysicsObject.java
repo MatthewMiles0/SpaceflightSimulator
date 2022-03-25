@@ -6,6 +6,7 @@ import me.miles.matthew.spaceflight.Utils.Vector2d;
 
 public abstract class PhysicsObject {
 	public static final double GRAVITATIONAL_CONSTANT = 0.0000000000667430d; // nm^2/kg^2
+	protected double radius; // m
 	
 	protected double mass; // kg
 	
@@ -16,13 +17,14 @@ public abstract class PhysicsObject {
 	
 	// Setters and getters
 	
-	public PhysicsObject(double mass, double xPos, double yPos) {
-		this(mass, new Vector2d(xPos, yPos));
+	public PhysicsObject(double mass, double xPos, double yPos, double radius) {
+		this(mass, new Vector2d(xPos, yPos), radius);
 	}
 
-	public PhysicsObject(double mass, Vector2d position) {
+	public PhysicsObject(double mass, Vector2d position, double radius) {
 		this.mass = mass;
 		this.position = position;
+		this.radius = radius;
 	}
 	
 	public abstract boolean isClickedOn(double lX, double tY, int xClick, int yClick, double zoom);
@@ -53,6 +55,14 @@ public abstract class PhysicsObject {
 	
 	public double getXPos() {
 		return position.x;
+	}
+
+	public double getRadius() {
+		return this.radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
 	}
 
 	public void setXPos(double xPos) {
@@ -86,7 +96,7 @@ public abstract class PhysicsObject {
 	 * @param cY
 	 * @param zoom
 	 */
-	public abstract void draw(Graphics2D g2, double lX, double tY, double zoom);
+	public abstract void draw(Graphics2D g2, double lX, double tY, int windowWidth, int windowHeight, double zoom);
 	
 	// METHODS
 	
@@ -101,6 +111,10 @@ public abstract class PhysicsObject {
 		double distanceSquared = Math.pow(this.position.x-o.getXPos(), 2) + Math.pow(this.position.y-o.getYPos(), 2);
 		
 		return PhysicsObject.GRAVITATIONAL_CONSTANT*this.mass*o.getMass()/distanceSquared;
+	}
+
+	public double getSurfaceAcceleration() {
+		return PhysicsObject.GRAVITATIONAL_CONSTANT*mass/Math.pow(radius, 2);
 	}
 	
 	/**
@@ -131,7 +145,7 @@ public abstract class PhysicsObject {
 		double yAcc = massProd / Math.pow(this.yPos-o.getYPos(), 2);
 		*/
 		
-		if (this.mass == 1586000000000000000000d) System.out.println(angle);
+		// if (this.mass == 1586000000000000000000d) S/ystem.out.println(angle);
 		
 		// F = G*(m1*m2)/(r^2)
 		// F = m*a
@@ -167,7 +181,7 @@ public abstract class PhysicsObject {
 		//S/ystem.out.println(xPos);
 		this.position.y += yVel*timePassedMillis*simulationSpeed/1000d;
 
-		System.out.println(this.position.x+", "+this.position.x);
+		//S/ystem.out.println(this.position.x+", "+this.position.x);
 	}
 	
 }

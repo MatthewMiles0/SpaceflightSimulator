@@ -27,20 +27,19 @@ public class Runner implements ActionListener {
 	}
 	
 	public Runner() {
-		
-		// Create window
+		// Create JFrame window
 		window = new JFrame();
-		window.setSize(1000, 1000);
+		window.setSize(1200, 800);
 		window.setTitle("Spaceflight Simulator");
 		window.setMinimumSize(new Dimension(100,100));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// Initiate space stuff
+		// Initiate space environment
 		env = new SpaceEnvironment();
 		view = new SpaceView(env);
 		window.add(view);
 		
-		// Icon image
+		// Window icon image
 		URL imgURL = getClass().getResource("/me/miles/matthew/spaceflight/space1.png");
 		ImageIcon icon = new ImageIcon(imgURL);
 		window.setIconImage(icon.getImage());
@@ -49,7 +48,8 @@ public class Runner implements ActionListener {
 		physicsUpdate = new Timer(7, this);
 		physicsUpdate.start();
 		
-		frameUpdate = new Timer(14, this);
+		frameUpdate = new Timer(1/*4*/, this);
+		last = Instant.now().toEpochMilli();
 		frameUpdate.start();
 
 		// Start rendering
@@ -59,17 +59,19 @@ public class Runner implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == physicsUpdate) {
+			// Calculate the time since the last physics update
 			last = now;
 			now = Instant.now().toEpochMilli();
 			long timePassedMillis = now-last;
 			
+			// If the time passed is too large, don't update
 			if (timePassedMillis > 1000) {
 				timePassedMillis = 1;
 				System.out.println("Took over a second to perform the previous tick!");
 			}
-			//S/ystem.out.println(timePassedMillis/1000d);
 			env.physicsTick(timePassedMillis, 100000);
 		} else if (ae.getSource() == frameUpdate) {
+			// Update the view
 			view.refresh();
 		}
 	}

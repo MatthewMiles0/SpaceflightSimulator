@@ -70,7 +70,7 @@ public class SpriteTest {
         //sprite.rotate(45);
 
         Sprite custom = new Sprite(new Vector2d(), new Vector2d(300, 300));
-        PlanetGen.generatePlanet(100, "", 0xFFFF00, 0xD6550B, "src/me/miles/matthew/spaceflight/Textures/Planets/x.png");
+        OldPlanetGen.generatePlanet(100, "", 0xFFFF00, 0xD6550B, "src/me/miles/matthew/spaceflight/Textures/Planets/x.png");
         custom.setTexture("src/me/miles/matthew/spaceflight/Textures/Planets/x.png");
         
         // create a JFrame
