@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Info {
-    int buttonWidth = 30;
+    int iconWidth = 30;
     int windowWidth = 100;
     int windowHeight = 200;
     int x = 25;
@@ -15,6 +15,7 @@ public class Info {
     boolean hover = false;
     BufferedImage image = null;
 
+    // Conversions of all the units into metres
     private static final Map<String, Double> UNITS = new HashMap<String, Double>();
 	static {
 		UNITS.put("1 nm",                   1E-9);
@@ -26,8 +27,7 @@ public class Info {
         UNITS.put("1000 km",                1000000d);
         UNITS.put("10,000 km",              10000000d);
         UNITS.put("1 lightsecond",          2.998E8);
-        UNITS.put("100,000 km",             100000000d);
-        UNITS.put("1 megametre",            1000000000d);
+        UNITS.put("10 lightseconds",        2.998E9);
         UNITS.put("1 lightminute",          1.799E10d);
 		UNITS.put("1 astronomical unit",    149597870700d);
         UNITS.put("10 astronomical units",  1495978707000d);
@@ -37,34 +37,42 @@ public class Info {
 		UNITS.put("1 parsec",               3.08567758E16);
 	};
 
+    /**
+     * Adds information overlays on the screen
+     */
     public Info() {
         image = DrawTools.fetchTexture("../Textures/infocard.png");
     }
     
+    /**
+     * Draw information overlays
+     * @param g2 the graphics2d object, representing the screen
+     * @param windowWidth the width of the window in which informaion is being shown
+     * @param windowHeight the height o fhte window in which information is being shown
+     * @param zoom the zoom, used to calculate the scale indicator
+     */
     public void draw(Graphics2D g2, int windowWidth, int windowHeight, double zoom) {
+        // Draw the question mark symbol
         g2.setColor(new Color(100, 100, 100));
-        g2.fillOval(x-buttonWidth/2-3, y-buttonWidth/2-3, buttonWidth+6, buttonWidth+6);
+        g2.fillOval(x-iconWidth/2-3, y-iconWidth/2-3, iconWidth+6, iconWidth+6);
         g2.setColor(new Color(200, 200, 200));
-        g2.fillOval(x-buttonWidth/2, y-buttonWidth/2, buttonWidth, buttonWidth);
+        g2.fillOval(x-iconWidth/2, y-iconWidth/2, iconWidth, iconWidth);
         g2.setColor(new Color(100, 100, 100));
         g2.setFont(new Font("Arial", Font.BOLD, 22));
         g2.drawString("?", x-7, y+7);
 
+        // On hover of the question mark, show the equations image
         if (hover) {
             g2.setColor(new Color(255, 255, 255));
-            g2.drawImage(image, x-buttonWidth/2, y+buttonWidth/2+10, image.getWidth(), image.getHeight(), null);
-            //g2.fillRect(x-buttonWidth/2, y+buttonWidth/2+10, windowWidth, windowHeight);
+            g2.drawImage(image, x-iconWidth/2, y+iconWidth/2+10, image.getWidth(), image.getHeight(), null);
         }
 
         // draw unit measurements
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        // S/ystem.out.println("Each 100 pixels is "+100/zoom+" meters");
         
-        // draw the unit from UNITS which is closest to 100px long
-        double ideal = 200d/zoom;
-        // System.out.println(zoom);
+        // draw the unit from UNITS which is closest to 200px long
+        double ideal = 200d/zoom; // The ideal width
         double best = Double.MAX_VALUE;
         String bestUnit = "";
         for (String key : UNITS.keySet()) {
@@ -76,6 +84,7 @@ public class Info {
             }
         }
         
+        // Draw the scale indicator
         g2.drawString("This is "+bestUnit, 10, windowHeight-39);
         g2.drawString(bestUnit + " = " + (UNITS.get(bestUnit)) + " m", 10, windowHeight-15);
         g2.fillRect(10, windowHeight-36, 2, 10);
@@ -83,7 +92,13 @@ public class Info {
         g2.fillRect(10+(int)(UNITS.get(bestUnit)*zoom), windowHeight-36, 2, 10);
     }
 
+    /**
+     * Checks if the mouse is hovering over the quetion mark icon
+     * @param mouseX The x-coordinate of the mouse within the window
+     * @param mouseY The y-coordinate of the mouse within the window
+     */
     public void checkHover(int mouseX, int mouseY) {
-        hover = Math.pow(mouseX-x, 2) + Math.pow(mouseY-y, 2) <= Math.pow(buttonWidth/2, 2);
+        // Using pythagorean theorem to find the distance from the centre of the icon
+        hover = Math.pow(mouseX-x, 2) + Math.pow(mouseY-y, 2) <= Math.pow(iconWidth/2, 2);
     }
 }

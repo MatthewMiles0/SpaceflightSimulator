@@ -8,6 +8,11 @@ import javax.imageio.ImageIO;
 
 public class DrawTools {
 
+    /**
+     * Fetches a texture using a relative path
+     * @param filePath The relative path to the texture
+     * @return A bufferedimage of the texture
+     */
     public static BufferedImage fetchTexture(String filePath) {
         // get the file
         File file = new File(filePath);
@@ -17,12 +22,6 @@ public class DrawTools {
             InputStream iconstream = DrawTools.class.getResourceAsStream(filePath);
             image = ImageIO.read(iconstream);
         } catch (Exception e) {
-            // // generate errorimage
-            // image = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
-            // image.setRGB(0, 0, 0xFFFF00FF);
-            // image.setRGB(1, 1, 0xFFFF00FF);
-            // image.setRGB(0, 1, 0xFF000000);
-            // image.setRGB(1, 0, 0xFF000000);
             System.out.println("Error loading texture: " + filePath);
             return null;
         }
@@ -30,6 +29,12 @@ public class DrawTools {
         return image;
     }
 
+    /**
+     * Rotates an image by a specified angle
+     * @param inputImage The image to be rotated
+     * @param angle THe angle in radians
+     * @return The rotated image (same size)
+     */
     public static BufferedImage rotateImage(BufferedImage inputImage, double angle) {
         // get the image dimensions
         int width = inputImage.getWidth();
@@ -47,6 +52,12 @@ public class DrawTools {
         return outputImage;
     }
 
+    /**
+     * sclaes an image to a certain size
+     * @param inputImg The image to be scaled
+     * @param scale The scale factor
+     * @return The scaled bufferedimage
+     */
     public static BufferedImage scaleImage(BufferedImage inputImg, double scale) {
         if (scale < 1) {
             scale = 1;

@@ -1,0 +1,48 @@
+
+FUNCTION orbit_body(satellite, body):
+    orbit_distance = sqaure_root( (satellite.x-body.x)^2 + (satellite.y-body.y)^2 )
+    orbit_velocity = square_root( 6.67408*10^(-11) * satellite.mass / distance )
+
+    satellite.x_velocity = body.x_velocity + orbit_velocity
+
+
+FUNCTION draw_trail(trail_stack, x, y):
+    trail_length = trail_stack.length
+
+    FOR i = 1 -> trail_length:
+
+
+CLASS queue:
+    FUNCTION initialise(size):
+        self.queueArray = NEW Array[size]
+        self.queueLength = 0
+    
+    FUNCTION add(item):
+        self.queueLength = self.queueLength + 1
+        self.queueArray[self.queueLength] = item
+    
+    FUNCTION is_empty():
+        IF self.queueLength == 0:
+            RETURN TRUE
+        ELSE:
+            RETURN FALSE
+    
+    FUNCTION pop():
+        IF is_empty():
+            RETURN NULL
+        
+        item = self.queueArray[0]
+        
+        FOR i = 1 -> self.queueLength:
+            self.queueArray[i-1] = self.queueArray[i]
+        
+        self.queueLength = self.queueLength - 1
+    
+    FUNCTION get_queue():
+        returnArray = NEW Array[self.queueLength]
+
+        FOR i = 0 -> self.queueLength:
+            returnArray[i] = self.queueArray[i]
+        
+        RETURN returnArray
+    

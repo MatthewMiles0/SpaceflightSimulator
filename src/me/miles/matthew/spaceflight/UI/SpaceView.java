@@ -29,10 +29,10 @@ import me.miles.matthew.spaceflight.physics.SpaceEnvironment;
 @SuppressWarnings("serial")
 public class SpaceView extends JPanel implements MouseListener, MouseWheelListener, ActionListener, ComponentListener, KeyListener {
 	private SpaceEnvironment mySpace;
-	private double scale = 0.00001d; // metres per pixel?
+	private double scale = 0.00001d; // pixels per metre
 	private double cX = 0; // the centre of the screen in space coordinates
 	private double cY = -57.9E9;
-	CelestialBody focus = null;
+	CelestialBody focus = null; // The object the camera is moving relative to
 	Point2D.Double lastFocusPos = null;
 	private Info info = new Info();
 	private BufferedImage backImg = null;
@@ -50,12 +50,12 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 		/*
 		// TEST
-		CelestialBody xa = new CelestialBody (1d, 100, 0, true, 0xFF3333, 1, "x", 1);
+		// CelestialBody xa = new CelestialBody (1d, 100, 0, true, 0xFF3333, 1, "x", 1);
 		CelestialBody pluto = new CelestialBody(13090000000000000000000d, 0, 0, true, 0xFF3333, 1188300, "Pluto", 2);
 		CelestialBody charon = new CelestialBody(1586000000000000000000d, 0, -19640000, true, 0x34ace3, 606000, "Charon", 2);
-		CelestialBody bharon = new CelestialBody(1586000000000000000000d, 10000, -19640000*2, true, 0x34ace3, 606000, "Bharon", 2);
+		CelestialBody bharon = new CelestialBody(1586000000000000000000d, 10000, -19640000*2, true, 0xace334, 606000, "Bharon", 2);
 		
-		mySpace.addBody(xa);
+		// mySpace.addBody(xa);
 		mySpace.addBody((PhysicsObject) pluto);
 		
 		
@@ -63,7 +63,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 		mySpace.addBody((PhysicsObject) charon);
 		
-		//mySpace.addBody((PhysicsObject) bharon);
+		mySpace.addBody((PhysicsObject) bharon);
 		
 		// orbital period of 153 hours
 		// radius = 19640 km 
@@ -71,8 +71,9 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		double angularVel = 2*Math.PI/(153*60*60);
 		
 		charon.setXVel(angularVel*19640000d);
-		bharon.setXVel(angularVel*19640000d/1.5d);
-		
+		bharon.setXVel(-angularVel*20635000d/1.5d);
+		// mySpace.autoDoubleOrbit(bharon, pluto, charon);
+
 		this.setFocus(pluto);
 		this.goTo(pluto);*/
 
@@ -91,8 +92,13 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		CelestialBody uranus	= new CelestialBody(1898E24, 	0, -2867.5E9,	false, 	0x6FCED1, 25559000, 	"Uranus", 	2);
 		CelestialBody neptune	= new CelestialBody(1898E24, 	0, -4515.5E9,	false, 	0x3F55AB, 49528000/2, 	"Neptune", 	2);
 		
+		// CelestialBody sun2 		= new CelestialBody(1.989E30d, 	0, -1E12, 		false, 	0xFFFF00, 696340000, 	"Sun 2",		1);
+		// CelestialBody sun3 		= new CelestialBody(1.989E30d, 	0, -2E12, 		false, 	0xFFFF00, 1396340000, 	"Sun 3",		1);
+		
 
 		mySpace.addBody(sun);
+		// mySpace.addBody(sun2);
+		// mySpace.addBody(sun3);
 		mySpace.addBody(mercury);
 		mySpace.addBody(venus);
 		mySpace.addBody(earth);
@@ -113,10 +119,12 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		mySpace.autoOrbit(uranus, sun);
 		mySpace.autoOrbit(neptune, sun);
 		
+		// mySpace.autoDoubleOrbit(sun2, jupiter, sun);
 		
 		this.setFocus(earth);
 		this.goTo(earth);
 		
+
 		backImg = DrawTools.fetchTexture("../Textures/background.png");
 		
 		//mySpace.addBody((PhysicsObject) new PlanetaryObject(10d, 150, 200, true, 0x33FF33, 50));
@@ -186,12 +194,6 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		long timePassed = System.currentTimeMillis() - timeOfLastFrame;
 		timeOfLastFrame = Instant.now().toEpochMilli();
 		
-		// long timePassed = Instant.now().toEpochMilli()-timeOfLastFrame;
-		
-		//S/ystem.out.println(1000f/timePassed);
-		
-		// timeOfLastFrame = Instant.now().toEpochMilli();
-		
 		if (focus != null) {
 			cX += focus.getXPos()-lastFocusPos.x;
 			cY += focus.getYPos()-lastFocusPos.y;
@@ -203,7 +205,6 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		}
 
 		if (drag) {
-			//S/ystem.out.println("Dragging");
 			double deltaX = prevMX-mousePos.x;
 			double deltaY = prevMY-mousePos.y;
 			
@@ -224,8 +225,6 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		g2.setColor(new Color(mySpace.getBackgroundColour()));
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		// draw background
-		// // scale background
-		// BufferedImage scaled = DrawTools.scaleImage(backImg, );
 		g2.drawImage(backImg, 0, 0, this.getWidth(), this.getHeight(), null);
 
 		
@@ -248,17 +247,10 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 				info.checkHover(mousePosScreen.x, mousePosScreen.y);
 			}
 		}
-		
-		// crosshairs
-		// g2.setColor(new Color(255, 255, 255, 200)); // 50% opacity
-		// g2.fillRect(middleX-12, middleY-1, 8, 2);
-		// g2.fillRect(middleX+4, middleY-1, 8, 2);
-		// g2.fillRect(middleX-1, middleY-12, 2, 8);
-		// g2.fillRect(middleX-1, middleY+4, 2, 8);
 
 		info.draw(g2, this.getWidth(), this.getHeight(), scale);
 
-		// g2.drawString("FPS: "+Math.round(1000d/timePassed), this.getWidth()-300, 30);
+		g2.drawString("FPS: "+Math.round(1000d/timePassed), this.getWidth()-50, 15);
 	}
 
 	@Override
@@ -266,17 +258,18 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent mwe) {
-		int dir = mwe.getWheelRotation(); // can also be larger value than 1 for multiple lines scrolled if applicable
+		int dir = mwe.getWheelRotation(); // Can also be larger value than 1 for multiple lines scrolled if applicable
 		
-		if (dir == 0) return;
+		if (dir == 0) return; // Don't do calculations if no change
 		
 		int mouseX = mwe.getX();
 		int mouseY = mwe.getY();
 		
 		double zoom = 1.0d-(0.1d*dir); // +-10% zoom. % = smooth zooming
 		
-		// figures out original and new position of mouse in terms of space coords. Finds the difference (how much it has shifted by) and undoes it afterwards.
-		// anchor point (the point which should stay at the same position on the screen)
+		// Figures out original and new position of mouse in terms of space coords.
+		// Finds the difference (how much it has shifted by) and undoes it afterwards.
+		// Anchor point (the point which should stay at the same position on the screen)
 		double[] anchorCoords = toSpaceCoords(mouseX, mouseY);
 		
 		// scale

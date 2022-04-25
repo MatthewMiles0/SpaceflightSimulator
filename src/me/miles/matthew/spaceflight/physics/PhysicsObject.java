@@ -129,34 +129,33 @@ public abstract class PhysicsObject {
 	    return angle;
 	}
 	
+	/**
+	 * Applies acceleration towards another body within the environment
+	 * Uses the equation F = G*(m1*m2)/(r^2)
+	 * @param o the other object being attracted to
+	 * @param timePassedMillis the time passed since the last update in milliseconds
+	 * @param simulationSpeed the number of seconds passed in game per real world second
+	 */
 	public void doGAcceleration(PhysicsObject o, long timePassedMillis, long simulationSpeed) {
 		double xD = Math.abs(this.position.x-o.getXPos());
 		double yD = Math.abs(this.position.y-o.getYPos());
-		
-		double force = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass()/(xD*xD+yD*yD);
-		
-		double angle = getAngleTo(o.getXPos(), o.getYPos());
-		
-		double xAcc = force * Math.cos(angle);
-		double yAcc = force * Math.sin(angle);
-		
-		/* This isn't how gravity works:
-		double xAcc = massProd / Math.pow(this.xPos-o.getXPos(), 2);
-		double yAcc = massProd / Math.pow(this.yPos-o.getYPos(), 2);
-		*/
-		
-		// if (this.mass == 1586000000000000000000d) S/ystem.out.println(angle);
 		
 		// F = G*(m1*m2)/(r^2)
 		// F = m*a
 		// a = F/m
 		// a = (G*m2)/(r^2)
+
+		double linearAcceleration = PhysicsObject.GRAVITATIONAL_CONSTANT*o.getMass()/(xD*xD+yD*yD);
+		
+		double angle = getAngleTo(o.getXPos(), o.getYPos());
+		
+		double xAcc = linearAcceleration * Math.cos(angle);
+		double yAcc = linearAcceleration * Math.sin(angle);
 		
 		xVel += xAcc*timePassedMillis*simulationSpeed/1000d;
 		yVel += yAcc*timePassedMillis*simulationSpeed/1000d;
 	}
 	
-	/*
 	/**
 	 * Gets the angle to another object in radians from π to -π,
 	 * @param o

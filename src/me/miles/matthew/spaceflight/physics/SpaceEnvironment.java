@@ -48,14 +48,23 @@ public class SpaceEnvironment {
 		bodies.remove(pos);
 	}
 	
+	/**
+	 * Automatically gives the necessary x and y velocity to orbit a body
+	 * @param satellite The satellite being put in orbit
+	 * @param centre The body being orbited
+	 */
 	public void autoOrbit(CelestialBody satellite, CelestialBody centre) {
 		// figure out the velocity required for the satellite to maintain a stable orbit
-		double distance = Math.sqrt(Math.pow(satellite.getXPos()-centre.getXPos(), 2)+Math.pow(satellite.getYPos()-centre.getYPos(), 2));
+
+		// find the distance from the centre to the satellite
+		double distance = Math.sqrt(Math.pow(satellite.getXPos()-centre.getXPos(), 2)
+			+ Math.pow(satellite.getYPos()-centre.getYPos(), 2));
+		// v = sqrt( GM/r );
 		double velocity = Math.sqrt(PhysicsObject.GRAVITATIONAL_CONSTANT*centre.mass/distance);
 		
+		// set the x and y velocities appropriately
 		satellite.setXVel(centre.getXVel()+velocity);
 		satellite.setYVel(centre.getYVel());
-		// v = sqrt( GM/r );
 	}
 
 	public void autoDoubleOrbit(CelestialBody satellite, CelestialBody centre, CelestialBody master) {

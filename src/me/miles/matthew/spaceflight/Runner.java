@@ -48,7 +48,7 @@ public class Runner implements ActionListener {
 		physicsUpdate = new Timer(7, this);
 		physicsUpdate.start();
 		
-		frameUpdate = new Timer(1/*4*/, this);
+		frameUpdate = new Timer(14, this);
 		last = Instant.now().toEpochMilli();
 		frameUpdate.start();
 
@@ -69,7 +69,7 @@ public class Runner implements ActionListener {
 				timePassedMillis = 1;
 				System.out.println("Took over a second to perform the previous tick!");
 			}
-			env.physicsTick(timePassedMillis, 100000);
+			env.physicsTick(timePassedMillis, 100000/**100*/);
 		} else if (ae.getSource() == frameUpdate) {
 			// Update the view
 			view.refresh();
