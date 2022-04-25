@@ -1,4 +1,4 @@
-package me.miles.matthew.spaceflight.UI;
+package me.miles.matthew.spaceflight.Utils;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;

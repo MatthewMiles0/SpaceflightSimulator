@@ -26,6 +26,9 @@ public class Runner implements ActionListener {
 		new Runner();
 	}
 	
+	/**
+	 * Creates a new runner
+	 */
 	public Runner() {
 		// Create JFrame window
 		window = new JFrame();

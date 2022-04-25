@@ -8,8 +8,6 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -22,12 +20,13 @@ import java.time.Instant;
 
 import javax.swing.JPanel;
 
+import me.miles.matthew.spaceflight.Utils.DrawTools;
 import me.miles.matthew.spaceflight.physics.CelestialBody;
 import me.miles.matthew.spaceflight.physics.PhysicsObject;
 import me.miles.matthew.spaceflight.physics.SpaceEnvironment;
 
 @SuppressWarnings("serial")
-public class SpaceView extends JPanel implements MouseListener, MouseWheelListener, ActionListener, ComponentListener, KeyListener {
+public class SpaceView extends JPanel implements MouseListener, MouseWheelListener, ActionListener, KeyListener {
 	private SpaceEnvironment mySpace;
 	private double scale = 0.00001d; // pixels per metre
 	private double cX = 0; // the centre of the screen in space coordinates
@@ -134,10 +133,12 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		this.setFocusable(true);
 		this.addMouseListener(this);
 		this.addMouseWheelListener(this);
-		this.addComponentListener(this);
 		this.addKeyListener(this);
 	}
 	
+	/**
+	 * Refreshes the view
+	 */
 	public void refresh() {
 		repaint();
 	}
@@ -288,6 +289,10 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		
 	}
 
+	/**
+	 * Sets the focus of the camera to the given CelestialBody.
+	 * @param focus The CelestialBody to focus on.
+	 */
 	public void setFocus(CelestialBody focus) {
 		try { this.focus.setFocus(false); } catch (NullPointerException e) { };
 		this.focus = focus;
@@ -296,6 +301,10 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		drag = false;
 	}
 	
+	/**
+	 * Sets the camera to follow a given PhysicsObject.
+	 * @param obj The PhysicsObject to follow.
+	 */
 	public void goTo(PhysicsObject obj) {
 		this.cX = obj.getXPos();
 		this.cY = obj.getYPos();
@@ -323,20 +332,6 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 
 	@Override
 	public void mouseExited(MouseEvent me) {}
-
-	@Override
-	public void componentHidden(ComponentEvent ce) {}
-
-	@Override
-	public void componentMoved(ComponentEvent ce) {}
-
-	@Override
-	public void componentResized(ComponentEvent ce) {
-		//TODO: Figure out if this is necessary
-	}
-
-	@Override
-	public void componentShown(ComponentEvent ce) {}
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {}

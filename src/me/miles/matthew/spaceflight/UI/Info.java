@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+import me.miles.matthew.spaceflight.Utils.DrawTools;
+
 public class Info {
     int iconWidth = 30;
     int windowWidth = 100;

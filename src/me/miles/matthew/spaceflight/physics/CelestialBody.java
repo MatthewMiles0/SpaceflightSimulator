@@ -4,26 +4,21 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
-import me.miles.matthew.spaceflight.Queue;
-import me.miles.matthew.spaceflight.UI.DrawTools;
+import me.miles.matthew.spaceflight.Utils.DrawTools;
+import me.miles.matthew.spaceflight.Utils.Queue;
 import me.miles.matthew.spaceflight.Utils.Vector2d;
 
 public class CelestialBody extends PhysicsObject {
 	private boolean canLandOn;
 	private int colour;
-	private long randomSeed;
 	private String name;
 	private BufferedImage texture = null;
-	private double spinSpeed = 0;
-	private double spinAngle = 0;
 	private boolean focussed = false;
 
-	private Queue<Point2D.Double> trail = new Queue<Point2D.Double>();
-	private int maxTrailSize = 3000;
+	private Queue<Vector2d> trail = new Queue<Vector2d>();
+	private int trailSize = 3000;
 	private float pointsPerSecond = 20f;
 	private long timeSinceLastPointMillis = 0l;
 	
@@ -35,12 +30,32 @@ public class CelestialBody extends PhysicsObject {
 	
 	private int type;
 	
-
+	/**
+	 * Creates a new celestial body
+	 * @param mass the mass of the celestial body
+	 * @param xPos the x position of the celestial body (Space coordinates)
+	 * @param yPos the y position of the celestial body (Space coordinates)
+	 * @param isLandable whether or not the celestial body could be landed on
+	 * @param colour the colour of the celestial body
+	 * @param radius the radius of the celestial body
+	 * @param name the name of the celestial body
+	 * @param type the type of celestial body
+	 */
 	public CelestialBody(double mass, double xPos, double yPos,
 			boolean isLandable, int colour, double radius, String name, int type) {
 		this(mass, new Vector2d(xPos, yPos), isLandable, colour, radius, name, type);
 	}
 
+	/**
+	 * Creates a new celestial body
+	 * @param mass the mass of the celestial body
+	 * @param position the position of the celestial body (Space coordinates)
+	 * @param isLandable whether or not the celestial body could be landed on
+	 * @param colour the colour of the celestial body
+	 * @param radius the radius of the celestial body
+	 * @param name the name of the celestial body
+	 * @param type the type of celestial body
+	 */
 	public CelestialBody(double mass, Vector2d position, boolean isLandable,
 			int colour, double radius, String name, int type) {
 		super(mass, position, radius);
@@ -48,18 +63,10 @@ public class CelestialBody extends PhysicsObject {
 		this.colour = colour;
 		this.canLandOn = isLandable;
 		this.name = name;
-		this.randomSeed = (new Random()).nextLong();
 		this.type = type;
 
 		
 		texture = DrawTools.fetchTexture("../Textures/SolarSystem/"+name.toLowerCase()+".png");
-
-		if (!name.toLowerCase().equals("saturn"))
-			spinSpeed = (new Random()).nextDouble() * 0.125d * Math.PI;
-	}
-	
-	public boolean isLandanble() {
-		return canLandOn;
 	}
 	
 	@Override
@@ -76,11 +83,11 @@ public class CelestialBody extends PhysicsObject {
 		// Add to the end of the trail if enough time has passed since the last point
 		if (timeSinceLastPointMillis/1000f >= 1f/pointsPerSecond) {
 			timeSinceLastPointMillis = 0;
-			trail.add(new Point2D.Double(this.position.x, this.position.y));
+			trail.add(this.position);
 		}
 		
 		// Remove the oldest point if the trail is too long
-		if (trail.size() > maxTrailSize) {
+		if (trail.size() > trailSize) {
 			trail.pop();
 		}
 		
@@ -89,7 +96,7 @@ public class CelestialBody extends PhysicsObject {
 		int[] ys = new int[trail.size()+1];
 
 		for (int i = 0; i < trail.size(); i++) {
-			Point2D.Double point = trail.get(i);
+			Vector2d point = trail.get(i);
 			xs[i] = (int) Math.round((point.x-lX)*zoom);
 			ys[i] = (int) Math.round((point.y-tY)*zoom);
 		}
@@ -191,133 +198,161 @@ public class CelestialBody extends PhysicsObject {
 	public void physicsTick(long timePassedMillis, long simulationSpeed) {
 		super.physicsTick(timePassedMillis, simulationSpeed);
 		timeSinceLastPointMillis += timePassedMillis;
-		spinAngle += spinSpeed * timePassedMillis / 1000d;
 	}
 
 	// Getters and Setters
 
+	/**
+	 * Find if the body could be landed on by a spacecraft 
+	 * @return true if the body can be landed on, false otherwise
+	 */
 	public boolean isLandable() {
-		return this.canLandOn;
+		return canLandOn;
 	}
 
+	/**
+	 * Set whether the body can be landed on by a spacecraft
+	 * @param canLandOn true if the body can be landed on, false otherwise
+	 */
 	public void setLandable(boolean canLandOn) {
 		this.canLandOn = canLandOn;
 	}
 
+	/**
+	 * Get the primary colour of the body
+	 * @return the primary colour of the body
+	 */
 	public int getColour() {
 		return this.colour;
 	}
 
+	/**
+	 * Set the primary colour of the body
+	 * @param colour the primary colour of the body
+	 */
 	public void setColour(int colour) {
 		this.colour = colour;
 	}
 
-	public long getRandomSeed() {
-		return this.randomSeed;
-	}
-
-	public void setRandomSeed(long randomSeed) {
-		this.randomSeed = randomSeed;
-	}
-
+	/**
+	 * Get the name of the body
+	 * @return the name of the body
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Set the name of the body
+	 * @param name the name of the body
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
-	public boolean isCanLandOn() {
-		return this.canLandOn;
-	}
-
-	public boolean getCanLandOn() {
-		return this.canLandOn;
-	}
-
+	/**
+	 * Set if the body can be landed on by a spacecraft
+	 * @param canLandOn true if the body can be landed on, false otherwise 
+	 */
 	public void setCanLandOn(boolean canLandOn) {
 		this.canLandOn = canLandOn;
 	}
 
+	/**
+	 * Get the texture of the body
+	 * @return the texture of the body
+	 */
 	public BufferedImage getTexture() {
 		return this.texture;
 	}
 
+	/**
+	 * Set the texture of the body
+	 * @param texture the texture of the body
+	 */
 	public void setTexture(BufferedImage texture) {
 		this.texture = texture;
 	}
 
-	public double getSpinSpeed() {
-		return this.spinSpeed;
-	}
-
-	public void setSpinSpeed(double spinSpeed) {
-		this.spinSpeed = spinSpeed;
-	}
-
-	public double getSpinAngle() {
-		return this.spinAngle;
-	}
-
-	public void setSpinAngle(double spinAngle) {
-		this.spinAngle = spinAngle;
-	}
-
+	/**
+	 * Get if the body is focussed on
+	 * @return true if the body is focussed on, false otherwise
+	 */
 	public boolean isFocussed() {
 		return this.focussed;
 	}
 
-	public boolean getFocus() {
-		return this.focussed;
-	}
-
+	/**
+	 * Set if the body is focussed on
+	 * @param focussed true if the body is focussed on, false otherwise
+	 */
 	public void setFocus(boolean isFocussed) {
 		this.focussed = isFocussed;
 	}
 
-	public Point2D.Double[] getTrail() {
+	/**
+	 * Gets a list of points that make up the trail of the body
+	 * @return a list of points that make up the trail of the body
+	 */
+	public Vector2d[] getTrail() {
 		return this.trail.getQueue();
 	}
 
-	public void setTrail(Queue<Point2D.Double> trail) {
+	/**
+	 * Set the entire trail of the body
+	 * @param trail a queue containing the entire trail of the body
+	 */
+	public void setTrail(Queue<Vector2d> trail) {
 		this.trail = trail;
 	}
 
-	public int getMaxTrailSize() {
-		return this.maxTrailSize;
+	/**
+	 * Get the trail length
+	 * @return the trail length
+	 */
+	public int getTrailSize() {
+		return this.trailSize;
 	}
 
-	public void setMaxTrailSize(int maxTrailSize) {
-		this.maxTrailSize = maxTrailSize;
+	/**
+	 * Set the trail length
+	 * @param trailSize the trail length
+	 */
+	public void setTrailSize(int trailSize) {
+		this.trailSize = trailSize;
 	}
 
+	/** 
+	 * Get the number of points that are added to the trail per second
+	 * @return the number of points that are added to the trail per second
+	 */
 	public float getPointsPerSecond() {
 		return this.pointsPerSecond;
 	}
 
+	/**
+	 * Set the number of points that are added to the trail per second
+	 * @param pointsPerSecond the number of points that are added to the trail per second
+	 */
 	public void setPointsPerSecond(float pointsPerSecond) {
 		this.pointsPerSecond = pointsPerSecond;
 	}
 
-	public long getTimeSinceLastPointMillis() {
-		return this.timeSinceLastPointMillis;
-	}
-
-	public void setTimeSinceLastPointMillis(long timeSinceLastPointMillis) {
-		this.timeSinceLastPointMillis = timeSinceLastPointMillis;
-	}
-
+	/**
+	 * Get the type of the body
+	 * @return the type of the body
+	 */
 	public int getType() {
 		return this.type;
 	}
 
+	/**
+	 * Set the type of the body
+	 * @param type the type of the body
+	 */
 	public void setType(int type) {
 		this.type = type;
 	}
-
-	
 
 	@Override
 	/**
