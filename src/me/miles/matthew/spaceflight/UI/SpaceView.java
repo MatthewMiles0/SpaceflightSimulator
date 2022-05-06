@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.time.Instant;
 
@@ -33,7 +32,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	private double cX = 0; // the centre of the screen in space coordinates
 	private double cY = -57.9E9;
 	CelestialBody focus = null; // The object the camera is moving relative to
-	Point2D.Double lastFocusPos = null;
+	Vector2d lastFocusPos = null;
 	private Info info = new Info();
 	private BufferedImage backImg = null;
 	private long timeOfLastFrame;
@@ -180,7 +179,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		if (focus != null) {
 			cX += focus.getXPos()-lastFocusPos.x;
 			cY += focus.getYPos()-lastFocusPos.y;
-			lastFocusPos.setLocation(focus.getXPos(), focus.getYPos());
+			lastFocusPos = new Vector2d(focus.getXPos(), focus.getYPos());
 		}
 
 		if (mousePos == null) {
@@ -278,7 +277,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	public void setFocus(CelestialBody focus) {
 		try { this.focus.setFocus(false); } catch (NullPointerException e) { };
 		this.focus = focus;
-		this.lastFocusPos = new Point2D.Double(focus.getXPos(), focus.getYPos());
+		this.lastFocusPos = new Vector2d(focus.getXPos(), focus.getYPos());
 		focus.setFocus(true);
 		drag = false;
 	}
