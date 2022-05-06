@@ -1,7 +1,6 @@
 package me.miles.matthew.spaceflight.Utils;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
@@ -14,8 +13,6 @@ public class DrawTools {
      * @return A bufferedimage of the texture
      */
     public static BufferedImage fetchTexture(String filePath) {
-        // get the file
-        File file = new File(filePath);
         // read the image
         BufferedImage image = null;
         try {

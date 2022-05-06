@@ -83,7 +83,7 @@ public class CelestialBody extends PhysicsObject {
 		// Add to the end of the trail if enough time has passed since the last point
 		if (timeSinceLastPointMillis/1000f >= 1f/pointsPerSecond) {
 			timeSinceLastPointMillis = 0;
-			trail.add(this.position);
+			trail.add(new Vector2d(this.position));
 		}
 		
 		// Remove the oldest point if the trail is too long
@@ -94,6 +94,8 @@ public class CelestialBody extends PhysicsObject {
 		// Calculate the position of each point in screen coordinates
 		int[] xs = new int[trail.size()+1];
 		int[] ys = new int[trail.size()+1];
+
+		// System.out.println("Trail debug for "+this.name+":\nSize: "+trail.size()+"\n0 Position: ("+trail.get(0).x+", "+trail.get(0).y+")");
 
 		for (int i = 0; i < trail.size(); i++) {
 			Vector2d point = trail.get(i);
@@ -357,7 +359,8 @@ public class CelestialBody extends PhysicsObject {
 	@Override
 	/**
 	 * Checks if the cursor is clicking the object.
-	 * If the object is small enough, it will be checked if the cursor is clicking within 20 pixels of the object.
+	 * If the object is small enough, it will be checked if
+	 * the cursor is clicking within 20 pixels of the object.
 	 * @param lX The leftmost x coordinate of the screen.
 	 * @param tY The topmost y coordinate of the screen.
 	 * @param xClick The x coordinate of the cursor (screen space).
@@ -365,8 +368,8 @@ public class CelestialBody extends PhysicsObject {
 	 * @param zoom The zoom level of the screen.
 	 */
 	public boolean isClickedOn(double lX, double tY, int xClick, int yClick, double zoom) {
-		double distanceSquared = Math.pow((this.position.x-lX)*zoom - xClick, 2) + Math.pow((this.position.y-tY)*zoom - yClick, 2);
-		// if (this.type == 1) S/ystem.out.println("Distance to "+this.name+" is "+(int) Math.sqrt(distanceSquared));
+		double distanceSquared = Math.pow((this.position.x-lX)*zoom - xClick, 2)
+			+ Math.pow((this.position.y-tY)*zoom - yClick, 2);
 		return distanceSquared <= Math.pow(Math.max(20, zoom*this.radius), 2);
 	}
 }

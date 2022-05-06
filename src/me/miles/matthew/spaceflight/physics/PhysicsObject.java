@@ -208,7 +208,7 @@ public abstract class PhysicsObject {
 	 */
 	public double getAngleTo(double targetX, double targetY) {
 	    double angle = Math.atan2(targetY - this.getYPos(), targetX - this.getXPos());
-
+		
 	    return angle;
 	}
 	

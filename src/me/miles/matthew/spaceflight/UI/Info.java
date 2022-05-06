@@ -18,7 +18,8 @@ public class Info {
     BufferedImage image = null;
 
     // Conversions of all the units into metres
-    private static final Map<String, Double> UNITS = new HashMap<String, Double>();
+    private static final Map<String, Double> UNITS
+        = new HashMap<String, Double>();
 	static {
 		UNITS.put("1 nm",                   1E-9);
 		UNITS.put("1 cm",                   0.1d);
@@ -88,10 +89,13 @@ public class Info {
         
         // Draw the scale indicator
         g2.drawString("This is "+bestUnit, 10, windowHeight-39);
-        g2.drawString(bestUnit + " = " + (UNITS.get(bestUnit)) + " m", 10, windowHeight-15);
+        g2.drawString(bestUnit + " = " + (UNITS.get(bestUnit))
+            + " m", 10, windowHeight-15);
         g2.fillRect(10, windowHeight-36, 2, 10);
-        g2.fillRect(10, windowHeight-32, (int)(UNITS.get(bestUnit)*zoom), 2);
-        g2.fillRect(10+(int)(UNITS.get(bestUnit)*zoom), windowHeight-36, 2, 10);
+        g2.fillRect(10, windowHeight-32,
+            (int)(UNITS.get(bestUnit)*zoom), 2);
+        g2.fillRect(10+(int)(UNITS.get(bestUnit)*zoom),
+            windowHeight-36, 2, 10);
     }
 
     /**

@@ -21,6 +21,7 @@ import java.time.Instant;
 import javax.swing.JPanel;
 
 import me.miles.matthew.spaceflight.Utils.DrawTools;
+import me.miles.matthew.spaceflight.Utils.Vector2d;
 import me.miles.matthew.spaceflight.physics.CelestialBody;
 import me.miles.matthew.spaceflight.physics.PhysicsObject;
 import me.miles.matthew.spaceflight.physics.SpaceEnvironment;
@@ -84,7 +85,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		CelestialBody mercury 	= new CelestialBody(0.33E24, 	0, -57.9E9, 	true, 	0xA8A3A0, 4879000/2, 	"Mercury", 	2);
 		CelestialBody venus 	= new CelestialBody(4.87E24, 	0, -108.2E9, 	true, 	0xD2B49F, 12104000/2, 	"Venus", 	2);
 		CelestialBody earth 	= new CelestialBody(5.97E24, 	0, -149.6E9, 	true, 	0x0ab6bf, 12756000/2, 	"Earth",	2);
-		CelestialBody moon 		= new CelestialBody(0.073E24,	0,	-149.984E9,	true, 	0xAAAAAA, 3475000/2, 	"The Moon", 	3);
+		CelestialBody moon 		= new CelestialBody(0.073E24,	0,	-149.984E9,	true, 	0xAAAAAA, 3475000/2, 	"The Moon", 3);
 		CelestialBody mars 		= new CelestialBody(0.642E24, 	0, -228.0E9,	true, 	0xD68A5A, 3396000, 		"Mars", 	2);
 		CelestialBody jupiter	= new CelestialBody(1898E24, 	0, -778.5E9,	false, 	0xDE4E07, 142984000/2, 	"Jupiter", 	2);
 		CelestialBody saturn	= new CelestialBody(568E24, 	0, -1432E9,		false, 	0xC9AD57, 120536000/2, 	"Saturn", 	2);
@@ -149,7 +150,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 	 * @param yPos
 	 * @return
 	 */
-	private double[] toSpaceCoords(double xPos, double yPos) {
+	private Vector2d toSpaceCoords(double xPos, double yPos) {
 		xPos -= this.getWidth()/2;
 		yPos -= this.getHeight()/2;
 		
@@ -159,26 +160,7 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		xPos += cX;
 		yPos += cY;
 		
-		return new double[] {xPos, yPos};
-	}
-	
-	/**
-	 * Converts a set of space coordinats to their position on screen (even if that position is not being rendered)
-	 * @param xPos
-	 * @param yPos
-	 * @return
-	 */
-	public int[] toScreenCoords(double xPos, double yPos) { //TODO: Not tested
-		xPos -= cX;
-		yPos -= cY;
-		
-		xPos *= scale;
-		yPos *= scale;
-		
-		xPos += this.getWidth()/2;
-		yPos += this.getHeight()/2;
-		
-		return new int[] {(int) Math.round(xPos), (int) Math.round(yPos)};
+		return new Vector2d(xPos, yPos);
 	}
 	
 	@Override
@@ -271,17 +253,17 @@ public class SpaceView extends JPanel implements MouseListener, MouseWheelListen
 		// Figures out original and new position of mouse in terms of space coords.
 		// Finds the difference (how much it has shifted by) and undoes it afterwards.
 		// Anchor point (the point which should stay at the same position on the screen)
-		double[] anchorCoords = toSpaceCoords(mouseX, mouseY);
+		Vector2d anchorCoords = toSpaceCoords(mouseX, mouseY);
 		
 		// scale
 		scale *= zoom;
 		
 		// find new position of mouse
-		double[] shiftedCoords = toSpaceCoords(mouseX, mouseY);
+		Vector2d shiftedCoords = toSpaceCoords(mouseX, mouseY);
 		
 		// find shift required to get back to the anchor
-		double shiftX = anchorCoords[0] - shiftedCoords[0];
-		double shiftY = anchorCoords[1] - shiftedCoords[1];
+		double shiftX = anchorCoords.x - shiftedCoords.x;
+		double shiftY = anchorCoords.y - shiftedCoords.y;
 		
 		// shifts the centre position accordingly
 		cX += shiftX;
