@@ -19,8 +19,7 @@ public class Runner implements ActionListener {
 	SpaceEnvironment env;
 	Timer physicsUpdate;
 	Timer frameUpdate;
-	long last = Instant.now().toEpochMilli();
-	long now = 0;
+	long lastPhysicsTickMillis = Instant.now().toEpochMilli();
 	
 	public static void main(String[] args) {
 		new Runner();
@@ -52,7 +51,7 @@ public class Runner implements ActionListener {
 		physicsUpdate.start();
 		
 		frameUpdate = new Timer(14, this);
-		last = Instant.now().toEpochMilli();
+		lastPhysicsTickMillis = Instant.now().toEpochMilli();
 		frameUpdate.start();
 
 		// Start rendering
@@ -63,9 +62,9 @@ public class Runner implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == physicsUpdate) {
 			// Calculate the time since the last physics update
-			last = now;
-			now = Instant.now().toEpochMilli();
-			long timePassedMillis = now-last;
+			
+			long now = Instant.now().toEpochMilli();
+			long timePassedMillis = now-lastPhysicsTickMillis;
 			
 			// If the time passed is too large, don't update
 			if (timePassedMillis > 1000) {
@@ -73,6 +72,7 @@ public class Runner implements ActionListener {
 				System.out.println("Took over a second to perform the previous tick!");
 			}
 			env.physicsTick(timePassedMillis, 100000/**100*/);
+			lastPhysicsTickMillis = now;
 		} else if (ae.getSource() == frameUpdate) {
 			// Update the view
 			view.refresh();
